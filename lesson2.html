@@ -1,0 +1,2311 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"/>
+  <meta name="theme-color" content="#000000">
+  <title>Урок 2: Полная установка и настройка Go в VS Code</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ===== CSS VARIABLES ===== */
+    :root {
+      /* Основные цвета - тёмная тема */
+      --color-bg: #000000;
+      --color-bg-secondary: #0a0a0a;
+      --color-bg-tertiary: #111111;
+      --color-surface: rgba(30, 30, 35, 0.85);
+      --color-surface-light: rgba(40, 40, 45, 0.7);
+      
+      /* Акцентные цвета */
+      --accent-purple: #8b5cf6;
+      --accent-blue: #3b82f6;
+      --accent-pink: #ec4899;
+      --accent-cyan: #06b6d4;
+      --accent-green: #10b981;
+      --accent-orange: #f97316;
+      --accent-yellow: #eab308;
+      
+      /* Градиенты */
+      --gradient-go: linear-gradient(90deg, #8b5cf6, #3b82f6, #06b6d4);
+      --gradient-purple-blue: linear-gradient(90deg, #8b5cf6, #3b82f6);
+      --gradient-blue-pink: linear-gradient(90deg, #3b82f6, #ec4899);
+      --gradient-purple-pink: linear-gradient(90deg, #8b5cf6, #ec4899);
+      --gradient-cyan-blue: linear-gradient(90deg, #06b6d4, #3b82f6);
+      --gradient-book: linear-gradient(90deg, #8b5cf6, #3b82f6, #06b6d4, #10b981);
+      
+      /* Текст */
+      --color-text: #f8fafc;
+      --color-text-secondary: #cbd5e1;
+      --color-text-tertiary: #94a3b8;
+      
+      /* Границы */
+      --color-border: rgba(148, 163, 184, 0.15);
+      --color-border-light: rgba(148, 163, 184, 0.08);
+      --color-border-hover: rgba(139, 92, 246, 0.4);
+      
+      /* Эффекты */
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.5);
+      --shadow-neon: 0 0 20px rgba(139, 92, 246, 0.3);
+      --shadow-neon-go: 0 0 25px rgba(6, 182, 212, 0.3);
+      --shadow-neon-blue: 0 0 20px rgba(59, 130, 246, 0.3);
+      --shadow-neon-pink: 0 0 20px rgba(236, 72, 153, 0.3);
+      --shadow-neon-cyan: 0 0 20px rgba(6, 182, 212, 0.3);
+      --shadow-neon-green: 0 0 20px rgba(16, 185, 129, 0.3);
+      --shadow-neon-yellow: 0 0 20px rgba(234, 179, 8, 0.3);
+      
+      /* Размеры */
+      --border-radius-sm: 8px;
+      --border-radius-md: 12px;
+      --border-radius-lg: 16px;
+      --border-radius-xl: 20px;
+      --border-radius-2xl: 28px;
+      
+      /* Отступы */
+      --space-xs: 0.5rem;
+      --space-sm: 1rem;
+      --space-md: 1.5rem;
+      --space-lg: 2rem;
+      --space-xl: 3rem;
+      --space-2xl: 4rem;
+      --space-3xl: 6rem;
+      
+      /* Транзиции */
+      --transition-fast: 0.2s ease;
+      --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-slow: 0.5s ease;
+      
+      /* Безопасные зоны для iPhone */
+      --safe-area-inset-top: env(safe-area-inset-top, 0px);
+      --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-area-inset-left: env(safe-area-inset-left, 0px);
+      --safe-area-inset-right: env(safe-area-inset-right, 0px);
+    }
+    
+    /* ===== BASE STYLES ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+      -moz-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+      min-height: 100vh;
+      padding-bottom: var(--space-2xl);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(6, 182, 212, 0.05) 0%, transparent 50%);
+      z-index: -1;
+      pointer-events: none;
+    }
+    
+    /* ===== TYPOGRAPHY ===== */
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: var(--space-md);
+      letter-spacing: -0.01em;
+    }
+    
+    h1 {
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      background: var(--gradient-go);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 4px 30px rgba(139, 92, 246, 0.2);
+      margin-bottom: var(--space-lg);
+    }
+    
+    h2 {
+      font-size: clamp(1.75rem, 4vw, 3rem);
+      background: var(--gradient-cyan-blue);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: var(--space-md);
+    }
+    
+    h3 {
+      font-size: clamp(1.5rem, 3vw, 1.75rem);
+      color: var(--color-text);
+      margin-bottom: var(--space-sm);
+    }
+    
+    h4 {
+      font-size: clamp(1.125rem, 2vw, 1.25rem);
+      color: var(--color-text);
+      margin-bottom: var(--space-sm);
+    }
+    
+    p {
+      margin-bottom: var(--space-md);
+      color: var(--color-text-secondary);
+      font-size: clamp(1rem, 1.5vw, 1.125rem);
+      line-height: 1.7;
+    }
+    
+    .lead {
+      font-size: clamp(1.125rem, 2vw, 1.25rem);
+      font-weight: 400;
+      color: var(--color-text);
+      line-height: 1.8;
+      margin-bottom: var(--space-xl);
+    }
+    
+    strong {
+      color: var(--color-text);
+      font-weight: 600;
+    }
+    
+    kbd {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius-sm);
+      padding: 0.25rem 0.5rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875em;
+      box-shadow: var(--shadow-sm);
+      display: inline-block;
+      min-height: 1.5em;
+    }
+    
+    em {
+      font-style: italic;
+      color: var(--accent-cyan);
+    }
+    
+    /* ===== UTILITY CLASSES ===== */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 clamp(1rem, 4vw, 2rem);
+    }
+    
+    .grid {
+      display: grid;
+      gap: var(--space-lg);
+    }
+    
+    .cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .cols-4 { grid-template-columns: repeat(4, 1fr); }
+    
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .text-center { text-align: center; }
+    .text-right { text-align: right; }
+    
+    /* ===== NAVIGATION ===== */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--color-border);
+      z-index: 1000;
+      padding: var(--space-sm) 0;
+      padding-top: calc(var(--space-sm) + var(--safe-area-inset-top));
+    }
+    
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 clamp(1rem, 4vw, 2rem);
+    }
+    
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 800;
+      background: var(--gradient-purple-blue);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      text-decoration: none;
+      transition: all var(--transition-normal);
+      padding: 0.5rem;
+      border-radius: var(--border-radius-sm);
+    }
+    
+    .logo:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: clamp(1rem, 3vw, 2rem);
+    }
+    
+    .nav-link {
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: all var(--transition-normal);
+      position: relative;
+      padding: 0.5rem 0.25rem;
+      white-space: nowrap;
+    }
+    
+    .nav-link:hover {
+      color: var(--color-text);
+    }
+    
+    .nav-link.active {
+      color: var(--color-text);
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--gradient-purple-pink);
+      transition: width var(--transition-normal);
+    }
+    
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+    
+    /* ===== HAMBURGER MENU ===== */
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: var(--space-xs);
+      z-index: 1001;
+      width: 44px;
+      height: 44px;
+      justify-content: center;
+      align-items: center;
+      border-radius: var(--border-radius-sm);
+      transition: background var(--transition-fast);
+    }
+    
+    .hamburger:hover {
+      background: var(--color-surface);
+    }
+    
+    .hamburger-line {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: var(--color-text);
+      margin: 4px 0;
+      transition: all var(--transition-normal);
+    }
+    
+    .hamburger.active .hamburger-line:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    
+    .hamburger.active .hamburger-line:nth-child(2) {
+      opacity: 0;
+    }
+    
+    .hamburger.active .hamburger-line:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
+    }
+    
+    /* ===== MOBILE MENU ===== */
+    .mobile-menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.98);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      z-index: 999;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: opacity var(--transition-normal), transform var(--transition-normal);
+      padding: var(--safe-area-inset-top) 0 var(--safe-area-inset-bottom);
+    }
+    
+    .mobile-menu.active {
+      display: flex;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .mobile-menu-links {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      text-align: center;
+      width: 90%;
+      max-width: 300px;
+    }
+    
+    .mobile-nav-link {
+      color: var(--color-text);
+      text-decoration: none;
+      font-size: 1.25rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-md);
+      transition: all var(--transition-normal);
+      border-radius: var(--border-radius-lg);
+      background: var(--color-surface-light);
+      border: 1px solid transparent;
+    }
+    
+    .mobile-nav-link:hover,
+    .mobile-nav-link:active {
+      color: var(--accent-cyan);
+      transform: translateX(10px);
+      background: var(--color-surface);
+      border-color: var(--color-border-hover);
+    }
+    
+    .mobile-nav-link i {
+      width: 30px;
+      font-size: 1.25rem;
+      text-align: center;
+    }
+    
+    .mobile-nav-link.active {
+      color: var(--accent-purple);
+      background: var(--color-surface);
+    }
+    
+    .mobile-menu-footer {
+      position: absolute;
+      bottom: calc(var(--space-xl) + var(--safe-area-inset-bottom));
+      left: 0;
+      width: 100%;
+      text-align: center;
+      color: var(--color-text-tertiary);
+      font-size: 0.875rem;
+      padding: var(--space-md);
+    }
+    
+    /* ===== HERO SECTION ===== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: clamp(6rem, 10vh, 8rem) 0 var(--space-3xl);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .gopher {
+      font-size: clamp(4rem, 10vw, 8rem);
+      text-align: center;
+      margin-bottom: var(--space-xl);
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+    
+    /* ===== BOOK QUOTE SECTION ===== */
+    .book-quote {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-lg);
+      margin: var(--space-xl) 0;
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      position: relative;
+      backdrop-filter: blur(10px);
+    }
+    
+    .book-quote::before {
+      content: '"';
+      position: absolute;
+      top: -20px;
+      left: 20px;
+      font-size: 4rem;
+      font-family: Georgia, serif;
+      color: var(--accent-purple);
+      opacity: 0.3;
+    }
+    
+    .book-quote-content {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      font-style: italic;
+      line-height: 1.8;
+      color: var(--color-text);
+      margin-bottom: var(--space-md);
+      position: relative;
+      z-index: 1;
+    }
+    
+    .book-quote-author {
+      text-align: right;
+      font-size: 0.9rem;
+      color: var(--color-text-tertiary);
+      font-weight: 600;
+    }
+    
+    /* ===== CARDS ===== */
+    .card {
+      background: var(--color-surface);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-lg);
+      transition: all var(--transition-normal);
+      position: relative;
+      overflow: hidden;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent-cyan);
+      box-shadow: var(--shadow-neon-cyan);
+    }
+    
+    .card-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    
+    .card-link:hover .card {
+      transform: translateY(-5px);
+      border-color: var(--accent-cyan);
+      box-shadow: var(--shadow-neon-cyan);
+    }
+    
+    .glow-effect:hover {
+      box-shadow: 0 0 30px rgba(6, 182, 212, 0.4);
+    }
+    
+    /* ===== OS BADGES ===== */
+    .os-badges {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-md);
+      margin: var(--space-xl) 0;
+      flex-wrap: wrap;
+    }
+    
+    .os-badge {
+      padding: var(--space-sm) var(--space-lg);
+      border-radius: var(--border-radius-lg);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      transition: all var(--transition-normal);
+      min-height: 50px;
+      min-width: 120px;
+      justify-content: center;
+    }
+    
+    .os-badge.windows {
+      background: linear-gradient(135deg, rgba(0, 120, 212, 0.2), rgba(0, 120, 212, 0.4));
+      border: 1px solid rgba(0, 120, 212, 0.3);
+      color: #00bcf2;
+    }
+    
+    .os-badge.macos {
+      background: linear-gradient(135deg, rgba(162, 162, 162, 0.2), rgba(162, 162, 162, 0.4));
+      border: 1px solid rgba(162, 162, 162, 0.3);
+      color: #a2a2a2;
+    }
+    
+    .os-badge.linux {
+      background: linear-gradient(135deg, rgba(252, 141, 13, 0.2), rgba(252, 141, 13, 0.4));
+      border: 1px solid rgba(252, 141, 13, 0.3);
+      color: #fc8d0d;
+    }
+    
+    .os-badge:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* ===== TABLE ===== */
+    .table-wrapper {
+      overflow-x: auto;
+      margin: var(--space-lg) 0;
+      border-radius: var(--border-radius-lg);
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+      backdrop-filter: blur(10px);
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px;
+    }
+    
+    thead {
+      background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
+    }
+    
+    th {
+      padding: var(--space-md);
+      text-align: left;
+      color: white;
+      font-weight: 600;
+      font-size: 0.95rem;
+      position: sticky;
+      top: 0;
+    }
+    
+    td {
+      padding: var(--space-md);
+      border-bottom: 1px solid var(--color-border);
+      color: var(--color-text-secondary);
+      font-size: 0.95rem;
+    }
+    
+    tr:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    td strong {
+      color: var(--color-text);
+    }
+    
+    table a {
+      color: var(--accent-cyan);
+      text-decoration: none;
+      transition: all var(--transition-normal);
+      display: inline-block;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    
+    table a:hover {
+      color: var(--accent-blue);
+      text-decoration: underline;
+      background: rgba(6, 182, 212, 0.1);
+    }
+    
+    /* ===== TERMINAL COMMANDS ===== */
+    .terminal-command {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: var(--border-radius-md);
+      padding: var(--space-md);
+      margin: var(--space-md) 0;
+      font-family: 'Consolas', 'Monaco', monospace;
+      position: relative;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+    
+    .terminal-command code {
+      background: none;
+      color: var(--accent-cyan);
+      font-family: inherit;
+      padding: 0;
+      font-size: clamp(0.875rem, 2vw, 1rem);
+      overflow-x: auto;
+      flex: 1;
+      min-width: 200px;
+    }
+    
+    .terminal-command .command-copy {
+      background: rgba(59, 130, 246, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: var(--accent-blue);
+      border-radius: var(--border-radius-sm);
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all var(--transition-normal);
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      white-space: nowrap;
+      min-height: 44px;
+      min-width: 44px;
+      justify-content: center;
+    }
+    
+    .terminal-command .command-copy:hover {
+      background: rgba(59, 130, 246, 0.4);
+      transform: translateY(-1px);
+    }
+    
+    /* ===== IMPORTANT AND WARNING NOTES ===== */
+    .important-note {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(6, 182, 212, 0.1));
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-lg);
+      margin: var(--space-lg) 0;
+      backdrop-filter: blur(10px);
+    }
+    
+    .warning-note {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(249, 115, 22, 0.1));
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-lg);
+      margin: var(--space-lg) 0;
+      backdrop-filter: blur(10px);
+    }
+    
+    .critical-note {
+      background: linear-gradient(135deg, rgba(234, 179, 8, 0.1), rgba(245, 158, 11, 0.1));
+      border: 1px solid rgba(234, 179, 8, 0.2);
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-lg);
+      margin: var(--space-lg) 0;
+      border-left: 4px solid var(--accent-yellow);
+      backdrop-filter: blur(10px);
+    }
+    
+    .important-note p,
+    .warning-note p,
+    .critical-note p {
+      color: var(--color-text);
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin: 0;
+    }
+    
+    .important-note strong,
+    .warning-note strong,
+    .critical-note strong {
+      color: inherit;
+    }
+    
+    /* ===== GOPATH VS MODULES SECTION ===== */
+    .gopath-modules-comparison {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.1));
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-xl);
+      margin: var(--space-xl) 0;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      backdrop-filter: blur(10px);
+    }
+    
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-xl);
+      margin-top: var(--space-lg);
+    }
+    
+    .comparison-column {
+      padding: var(--space-lg);
+      border-radius: var(--border-radius-md);
+    }
+    
+    .comparison-column.old {
+      background: rgba(245, 158, 11, 0.05);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+    
+    .comparison-column.new {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    
+    .comparison-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-lg);
+      padding-bottom: var(--space-sm);
+      border-bottom: 2px solid;
+    }
+    
+    .comparison-header.old {
+      border-color: var(--accent-orange);
+      color: var(--accent-orange);
+    }
+    
+    .comparison-header.new {
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+    }
+    
+    /* ===== STEPS ===== */
+    .steps {
+      margin: var(--space-xl) 0;
+    }
+    
+    .step {
+      position: relative;
+      padding-left: clamp(3rem, 6vw, 4rem);
+      margin-bottom: var(--space-xl);
+      opacity: 0;
+      transform: translateX(-20px);
+      transition: all 0.6s ease;
+    }
+    
+    .step.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    
+    .step::before {
+      content: attr(data-step);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: clamp(2.5rem, 5vw, 3rem);
+      height: clamp(2.5rem, 5vw, 3rem);
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: white;
+    }
+    
+    /* ===== CODE BLOCKS ===== */
+    .code-block {
+      background: #0d1117;
+      border-radius: var(--border-radius-md);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      margin: var(--space-md) 0;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+    
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-sm) var(--space-md);
+      background: rgba(13, 17, 23, 0.9);
+      border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+    
+    .code-language {
+      font-family: 'Consolas', monospace;
+      font-size: 0.875rem;
+      color: var(--accent-cyan);
+      font-weight: 600;
+    }
+    
+    .copy-btn {
+      background: rgba(59, 130, 246, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: var(--accent-blue);
+      border-radius: var(--border-radius-sm);
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all var(--transition-normal);
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      min-height: 44px;
+      min-width: 44px;
+      justify-content: center;
+    }
+    
+    .copy-btn:hover {
+      background: rgba(59, 130, 246, 0.4);
+      transform: translateY(-1px);
+    }
+    
+    pre {
+      margin: 0;
+      padding: var(--space-md);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    code {
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      font-size: clamp(0.875rem, 2vw, 0.95rem);
+      line-height: 1.6;
+      tab-size: 2;
+    }
+    
+    .code-block code {
+      color: #c9d1d9;
+      background: none;
+      padding: 0;
+    }
+    
+    .code-block .hljs-keyword { color: #ff7b72; }
+    .code-block .hljs-type { color: #ffa657; }
+    .code-block .hljs-function { color: #d2a8ff; }
+    .code-block .hljs-string { color: #a5d6ff; }
+    .code-block .hljs-built_in { color: #79c0ff; }
+    .code-block .hljs-comment { color: #8b949e; }
+    
+    /* ===== CHECKLIST ===== */
+    .checklist {
+      list-style: none;
+      margin: var(--space-md) 0;
+    }
+    
+    .checklist li {
+      padding-left: var(--space-lg);
+      position: relative;
+      margin-bottom: var(--space-sm);
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+    }
+    
+    .checklist li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--accent-green);
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    
+    /* ===== LESSON SUMMARY ===== */
+    .lesson-summary {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(6, 182, 212, 0.1));
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-xl);
+      margin: var(--space-2xl) 0;
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      backdrop-filter: blur(10px);
+    }
+    
+    .summary-title {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-lg);
+    }
+    
+    .summary-title i {
+      font-size: 2rem;
+      background: var(--gradient-purple-blue);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    /* ===== LESSON NAVIGATION ===== */
+    .lesson-navigation {
+      display: flex;
+      justify-content: space-between;
+      margin: var(--space-2xl) 0;
+      gap: var(--space-md);
+    }
+    
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-md) var(--space-lg);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius-lg);
+      color: var(--color-text);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all var(--transition-normal);
+      flex: 1;
+      justify-content: center;
+      min-height: 60px;
+      text-align: center;
+    }
+    
+    .nav-btn:hover {
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-neon);
+    }
+    
+    /* ===== LESSON PROGRESS ===== */
+    .lesson-progress {
+      position: fixed;
+      right: var(--space-lg);
+      bottom: var(--space-lg);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-xs);
+      pointer-events: none;
+    }
+    
+    .progress-text {
+      font-size: 0.75rem;
+      color: var(--color-text-tertiary);
+      font-weight: 600;
+    }
+    
+    .progress-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      background: var(--gradient-go);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    .progress-circle {
+      width: 60px;
+      height: 60px;
+      pointer-events: auto;
+      cursor: pointer;
+      transition: transform var(--transition-normal);
+    }
+    
+    .progress-circle:hover {
+      transform: scale(1.1);
+    }
+    
+    .progress-circle svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+    
+    .progress-circle circle {
+      fill: none;
+      stroke-width: 4;
+      stroke-linecap: round;
+    }
+    
+    .progress-circle circle:first-child {
+      stroke: rgba(255, 255, 255, 0.1);
+    }
+    
+    .progress-circle circle:last-child {
+      stroke: url(#gradient);
+      stroke-dasharray: 188;
+      stroke-dashoffset: 188;
+      transition: stroke-dashoffset 0.3s ease;
+    }
+    
+    /* ===== BACK TO TOP BUTTON ===== */
+    .back-to-top {
+      position: fixed;
+      right: var(--space-lg);
+      bottom: calc(var(--space-lg) + 80px);
+      width: 50px;
+      height: 50px;
+      background: var(--color-surface);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--color-border);
+      border-radius: 50%;
+      color: var(--color-text);
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition-normal);
+      z-index: 100;
+      min-height: 44px;
+      min-width: 44px;
+    }
+    
+    .back-to-top.visible {
+      display: flex;
+    }
+    
+    .back-to-top:hover {
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-neon);
+    }
+    
+    /* ===== SWIPE INDICATOR ===== */
+    .swipe-indicator {
+      position: absolute;
+      bottom: var(--space-xl);
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-xs);
+      color: var(--color-text-tertiary);
+      font-size: 0.875rem;
+      animation: bounce 2s infinite;
+      cursor: pointer;
+      padding: var(--space-sm);
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-10px); }
+    }
+    
+    /* ===== FOOTER ===== */
+    .lesson-footer {
+      margin-top: var(--space-3xl);
+      padding-top: var(--space-xl);
+      border-top: 1px solid var(--color-border);
+      text-align: center;
+      color: var(--color-text-tertiary);
+      font-size: 0.875rem;
+    }
+    
+    /* ===== RESPONSIVE DESIGN ===== */
+    @media (max-width: 1024px) {
+      .cols-3 { grid-template-columns: repeat(2, 1fr); }
+      .cols-4 { grid-template-columns: repeat(2, 1fr); }
+      .comparison-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+      }
+      .nav-links {
+        gap: var(--space-md);
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .lead { font-size: 1.125rem; }
+      
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      
+      .cols-2,
+      .cols-3,
+      .cols-4 {
+        grid-template-columns: 1fr;
+      }
+      
+      .lesson-navigation {
+        flex-direction: column;
+        gap: var(--space-md);
+      }
+      
+      .step {
+        padding-left: 3.5rem;
+      }
+      
+      .step::before {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1.1rem;
+      }
+      
+      .lesson-progress {
+        right: var(--space-md);
+        bottom: var(--space-md);
+      }
+      
+      .back-to-top {
+        right: var(--space-md);
+        bottom: calc(var(--space-md) + 80px);
+      }
+      
+      .os-badges {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .os-badge {
+        width: 100%;
+        max-width: none;
+        justify-content: center;
+      }
+      
+      .book-quote {
+        padding: var(--space-lg);
+      }
+      
+      .book-quote::before {
+        font-size: 3rem;
+        top: -15px;
+      }
+      
+      .book-quote-content {
+        font-size: 1.1rem;
+      }
+      
+      .gopher {
+        font-size: 5rem;
+      }
+      
+      .terminal-command {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .terminal-command .command-copy {
+        align-self: flex-end;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .container {
+        padding: 0 var(--space-md);
+      }
+      
+      .card,
+      .important-note,
+      .warning-note,
+      .critical-note,
+      .lesson-summary,
+      .gopath-modules-comparison {
+        padding: var(--space-md);
+      }
+      
+      .mobile-nav-link {
+        font-size: 1.125rem;
+        padding: var(--space-sm);
+      }
+      
+      .step {
+        padding-left: 3rem;
+      }
+      
+      .step::before {
+        width: 2.25rem;
+        height: 2.25rem;
+        font-size: 1rem;
+      }
+      
+      .book-quote::before {
+        font-size: 2.5rem;
+        top: -10px;
+      }
+      
+      .progress-circle {
+        width: 50px;
+        height: 50px;
+      }
+      
+      .progress-circle circle:last-child {
+        stroke-dasharray: 157;
+        stroke-dashoffset: 157;
+      }
+      
+      .nav-btn {
+        padding: var(--space-sm) var(--space-md);
+      }
+    }
+    
+    /* ===== DARK MODE ENHANCEMENTS ===== */
+    @media (prefers-color-scheme: dark) {
+      body::before {
+        background: 
+          radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+          radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+          radial-gradient(circle at 40% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
+      }
+    }
+    
+    /* ===== PRINT STYLES ===== */
+    @media print {
+      .hero,
+      .lesson-progress,
+      .back-to-top,
+      .swipe-indicator,
+      .hamburger,
+      .mobile-menu,
+      .terminal-command .command-copy,
+      .copy-btn,
+      nav {
+        display: none !important;
+      }
+      
+      body {
+        background: white;
+        color: black;
+        padding: 0;
+      }
+      
+      .container {
+        max-width: none;
+        padding: 1cm;
+      }
+      
+      .card,
+      .important-note,
+      .warning-note,
+      .critical-note {
+        border: 1px solid #ddd;
+        box-shadow: none;
+        background: white;
+      }
+      
+      table {
+        border: 1px solid #ddd;
+      }
+      
+      .book-quote {
+        background: #f8f9fa;
+      }
+      
+      h1, h2, h3, h4, h5, h6 {
+        color: black;
+        background: none;
+        -webkit-background-clip: initial;
+        background-clip: initial;
+      }
+    }
+    
+    /* ===== ACCESSIBILITY ===== */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      
+      .fade-in {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+      
+      .step {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+    }
+    
+    /* ===== IOS SAFE AREAS ===== */
+    @supports (padding: max(0px)) {
+      .container, .nav-container {
+        padding-left: max(var(--space-lg), var(--safe-area-inset-left));
+        padding-right: max(var(--space-lg), var(--safe-area-inset-right));
+      }
+      
+      .hero {
+        padding-top: max(clamp(6rem, 10vh, 8rem), calc(clamp(6rem, 10vh, 8rem) + var(--safe-area-inset-top)));
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Навигация -->
+  <nav aria-label="Основная навигация">
+    <div class="nav-container">
+      <a href="index.html" class="logo" aria-label="GolangCourse - главная">
+        <i class="fab fa-golang" aria-hidden="true"></i> GolangCourse
+      </a>
+      <!-- Десктопная навигация -->
+      <div class="nav-links" role="navigation">
+        <a href="index.html#overview" class="nav-link">К курсу</a>
+        <a href="#install" class="nav-link active">Установка Go</a>
+        <a href="#vscode" class="nav-link">VS Code</a>
+        <a href="#modules" class="nav-link">Go Modules</a>
+        <a href="#test" class="nav-link">Первый проект</a>
+      </div>
+      <!-- Мобильное гамбургер-меню -->
+      <button class="hamburger" id="hamburger" aria-label="Открыть меню" aria-expanded="false" aria-controls="mobileMenu">
+        <span class="hamburger-line" aria-hidden="true"></span>
+        <span class="hamburger-line" aria-hidden="true"></span>
+        <span class="hamburger-line" aria-hidden="true"></span>
+      </button>
+    </div>
+    <!-- Мобильное меню (полноэкранное) -->
+    <div class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Мобильное меню">
+      <div class="mobile-menu-links" role="menu">
+        <a href="index.html#overview" class="mobile-nav-link" role="menuitem">
+          <i class="fas fa-home" aria-hidden="true"></i>
+          К курсу
+        </a>
+        <a href="#install" class="mobile-nav-link active" role="menuitem">
+          <i class="fas fa-download" aria-hidden="true"></i>
+          Установка Go
+        </a>
+        <a href="#vscode" class="mobile-nav-link" role="menuitem">
+          <i class="fas fa-code" aria-hidden="true"></i>
+          VS Code
+        </a>
+        <a href="#modules" class="mobile-nav-link" role="menuitem">
+          <i class="fas fa-folder-open" aria-hidden="true"></i>
+          Go Modules
+        </a>
+        <a href="#test" class="mobile-nav-link" role="menuitem">
+          <i class="fas fa-play-circle" aria-hidden="true"></i>
+          Первый проект
+        </a>
+      </div>
+      <div class="mobile-menu-footer">
+        Урок 2 • Полная установка и настройка
+      </div>
+    </div>
+  </nav>
+
+  <!-- Герой секции урока -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="container">
+      <div class="gopher" role="img" aria-label="Талисман Go - гофер">🐹</div>
+      <div class="text-center" style="margin-bottom: var(--space-xl);">
+        <span class="badge" style="display: inline-block; background: var(--gradient-go); padding: var(--space-xs) var(--space-md); border-radius: var(--border-radius-sm); font-size: 0.875rem; font-weight: 600; margin-bottom: var(--space-lg); box-shadow: var(--shadow-neon-go);">
+          Урок 2 • Практическая настройка
+        </span>
+        <h1 id="hero-title">Полное руководство по установке Go и VS Code</h1>
+        <p class="lead">
+          Пошаговая инструкция от установки компилятора до первого запуска программы.
+          Учитывая как цитаты из книги Донована и Кернигана, так и современные стандарты (Go Modules).
+        </p>
+      </div>
+      <!-- Быстрая навигация по уроку -->
+      <div class="grid cols-4" role="navigation" aria-label="Быстрая навигация по уроку">
+        <a href="#install" class="card-link" aria-label="Перейти к установке Go">
+          <div class="card glow-effect" style="text-align: center;">
+            <i class="fas fa-download" style="font-size: 2rem; margin-bottom: var(--space-sm); color: var(--accent-pink);" aria-hidden="true"></i>
+            <h4>Go Компилятор</h4>
+            <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">Установка самого языка</p>
+          </div>
+        </a>
+        <a href="#vscode" class="card-link" aria-label="Перейти к установке VS Code">
+          <div class="card glow-effect" style="text-align: center;">
+            <i class="fas fa-code" style="font-size: 2rem; margin-bottom: var(--space-sm); color: var(--accent-cyan);" aria-hidden="true"></i>
+            <h4>VS Code</h4>
+            <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">Редактор + расширения</p>
+          </div>
+        </a>
+        <a href="#modules" class="card-link" aria-label="Перейти к разделу Go Modules">
+          <div class="card glow-effect" style="text-align: center;">
+            <i class="fas fa-folder-open" style="font-size: 2rem; margin-bottom: var(--space-sm); color: var(--accent-green);" aria-hidden="true"></i>
+            <h4>Go Modules</h4>
+            <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">Современный стандарт</p>
+          </div>
+        </a>
+        <a href="#test" class="card-link" aria-label="Перейти к созданию первого проекта">
+          <div class="card glow-effect" style="text-align: center;">
+            <i class="fas fa-play-circle" style="font-size: 2rem; margin-bottom: var(--space-sm); color: var(--accent-blue);" aria-hidden="true"></i>
+            <h4>Первый проект</h4>
+            <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">Создание и запуск</p>
+          </div>
+        </a>
+      </div>
+      <!-- Свайп-индикатор для мобильных -->
+      <button class="swipe-indicator" id="swipeIndicator" aria-label="Листайте вниз для продолжения">
+        <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        <span>Листайте вниз</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Основное содержание урока -->
+  <main class="container" id="main-content">
+    <section id="install">
+      <div class="content-section fade-in">
+        <h2>⚙️ Часть 1. Установка самого языка Go (Компилятор)</h2>
+        
+        <p class="lead">Прежде чем ставить редактор кода (VS Code), нужно установить «движок» языка. В книге сказано, что Go работает везде, но установка чуть отличается в зависимости от системы.</p>
+
+        <div class="book-quote fade-in" role="note" aria-label="Цитата из книги">
+          <div class="book-quote-content">
+            "Go работает на большом количестве Unix-подобных систем, таких как Linux, FreeBSD, OpenBSD, Mac OS X, а также на Plan 9 и Microsoft Windows..."
+          </div>
+          <div class="book-quote-author">— Донован, Керниган. "Язык программирования Go"</div>
+        </div>
+
+        <div class="book-quote fade-in" role="note" aria-label="Цитата из книги">
+          <div class="book-quote-content">
+            "К счастью, процесс загрузки прост... так что загрузка Go с сайта golang.org и установка на компьютер не должна занять более нескольких минут."
+          </div>
+          <div class="book-quote-author">— Донован, Керниган. "Язык программирования Go"</div>
+        </div>
+
+        <div class="important-note fade-in" role="note" aria-label="Важное примечание">
+          <h4><i class="fas fa-download" aria-hidden="true"></i> Скачиваем (Всем):</h4>
+          <p>Зайдите на официальный сайт: <strong><a href="https://go.dev/dl/" target="_blank" style="color: var(--accent-cyan); text-decoration: none;">golang.org/dl/</a></strong></p>
+          <p>Скачайте установщик для вашей операционной системы.</p>
+        </div>
+
+        <div class="os-badges">
+          <div class="os-badge windows" role="button" tabindex="0" aria-label="Установка для Windows">
+            <i class="fab fa-windows" aria-hidden="true"></i> Windows
+          </div>
+          <div class="os-badge macos" role="button" tabindex="0" aria-label="Установка для macOS">
+            <i class="fab fa-apple" aria-hidden="true"></i> macOS
+          </div>
+          <div class="os-badge linux" role="button" tabindex="0" aria-label="Установка для Linux">
+            <i class="fab fa-linux" aria-hidden="true"></i> Linux
+          </div>
+        </div>
+
+        <h3>📋 Пошаговая установка по операционным системам</h3>
+        
+        <div class="table-wrapper fade-in" role="region" aria-label="Таблица сравнения методов установки" tabindex="0">
+          <table>
+            <caption class="sr-only">Сравнение методов установки Go для разных операционных систем</caption>
+            <thead>
+              <tr>
+                <th scope="col">Операционная система</th>
+                <th scope="col">Основной метод</th>
+                <th scope="col">Альтернативный метод</th>
+                <th scope="col">Что происходит после установки</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row"><strong>Windows</strong></th>
+                <td>Скачать и запустить <code>.msi</code>-установщик</td>
+                <td>Установить через <code>winget</code></td>
+                <td>Установщик сам пропишет пути (PATH), нажимайте «Next» до конца</td>
+              </tr>
+              <tr>
+                <th scope="row"><strong>macOS</strong></th>
+                <td>Скачать и запустить <code>.pkg</code>-установщик</td>
+                <td>Установить через <strong>Homebrew</strong>: <code>brew install go</code></td>
+                <td>Всё установится в стандартную папку <code>/usr/local/go</code></td>
+              </tr>
+              <tr>
+                <th scope="row"><strong>Linux (Ubuntu/Debian)</strong></th>
+                <td>Установить через менеджер пакетов: <code>sudo apt update && sudo apt install golang-go</code></td>
+                <td>Скачать <code>.tar.gz</code> архив и распаковать в <code>/usr/local/go</code></td>
+                <td>После установки из архива добавьте <code>export PATH=$PATH:/usr/local/go/bin</code> в <code>~/.profile</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="steps">
+          <div class="step fade-in" data-step="1">
+            <h4>✅ Проверка установки</h4>
+            <p>После установки откройте терминал (командную строку) и напишите:</p>
+            <div class="terminal-command">
+              <code>go version</code>
+              <button class="command-copy" onclick="copyToClipboard('go version')" aria-label="Копировать команду">
+                <i class="far fa-copy" aria-hidden="true"></i> Копировать
+              </button>
+            </div>
+            <p>Если вы увидите версию (например, <code>go version go1.22.0 windows/amd64</code>), поздравляю — Go установлен!</p>
+          </div>
+        </div>
+
+        <div class="book-quote fade-in" role="note" aria-label="Цитата о версиях Go">
+          <div class="book-quote-content">
+            "Для выполнения примеров нужна версия Go не ниже 1.5"
+          </div>
+          <div class="book-quote-author">— Донован, Керниган. "Язык программирования Go"</div>
+          <p style="font-size: 0.9rem; color: var(--color-text-tertiary); margin-top: var(--space-sm);">
+            <i class="fas fa-info-circle" aria-hidden="true"></i> Сейчас стандартом являются версии 1.21+, так что любая свежая версия подойдет
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="vscode">
+      <div class="fade-in">
+        <h2>🛠️ Часть 2. Установка и настройка VS Code</h2>
+        <p>Сам по себе VS Code не умеет работать с Go — ему нужно «научить» понимать этот язык. Для этого существует официальное расширение от Google.</p>
+
+        <div class="steps">
+          <div class="step fade-in" data-step="1">
+            <h4>1. Скачиваем и устанавливаем VS Code</h4>
+            <p>Скачайте Visual Studio Code: <strong><a href="https://code.visualstudio.com/" target="_blank" style="color: var(--accent-cyan); text-decoration: none;">code.visualstudio.com</a></strong></p>
+            <p>Установите его как обычную программу. Это универсальный редактор, который подходит для любого языка.</p>
+          </div>
+
+          <div class="step fade-in" data-step="2">
+            <h4>2. Установка расширения Go</h4>
+            <p>В VS Code нажмите на иконку квадратов слева (Extensions), в поиске введите: <strong>"Go"</strong> и установите официальное расширение от <strong>Google (golang.go)</strong>.</p>
+            <div class="code-block">
+              <div class="code-header">
+                <span class="code-language">VS Code Extensions</span>
+                <button class="copy-btn" onclick="copyCode(this)" aria-label="Копировать текст">
+                  <i class="far fa-copy" aria-hidden="true"></i> Скопировать
+                </button>
+              </div>
+              <pre><code>Поиск: Go
+Установить: "Go" от Google (golang.go)</code></pre>
+            </div>
+          </div>
+
+          <div class="step fade-in" data-step="3">
+            <h4>3. Автоматическая установка инструментов</h4>
+            <p>Когда вы установите расширение и откроете любой файл <code>.go</code>, VS Code в углу спросит: <em>"The 'gopls' command is not available. Install?"</em>.</p>
+            <div class="critical-note" role="alert" aria-label="Важное предупреждение">
+              <p><strong>Нажмите «Install All».</strong></p>
+              <p>Это автоматически скачает и настроит: <code>gopls</code> (умная подсветка ошибок), <code>gofmt</code> (форматирование), <code>dlv</code> (отладчик), <code>goimports</code> (автоматическое добавление библиотек).</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="fade-in">
+          <h3>🔧 Настройка форматирования (Связь с книгой)</h3>
+          <p>В книге очень много внимания уделяется тому, чтобы код выглядел единообразно. В VS Code это настраивается очень просто.</p>
+          
+          <div class="book-quote" role="note" aria-label="Цитата о форматировании">
+            <div class="book-quote-content">
+              "Многие текстовые редакторы могут настраиваться так, что при каждом сохранении файла будет запускаться инструмент gofmt, так что ваш исходный текст всегда будет правильно отформатирован."
+            </div>
+            <div class="book-quote-author">— Донован, Керниган. "Язык программирования Go"</div>
+          </div>
+
+          <div class="important-note" role="note" aria-label="Инструкция по настройке">
+            <h4><i class="fas fa-cog" aria-hidden="true"></i> Как настроить автоформатирование в VS Code:</h4>
+            <ol style="padding-left: var(--space-lg); color: var(--color-text);">
+              <li>Зайдите в настройки (File → Preferences → Settings)</li>
+              <li>В строке поиска напишите: <strong>format on save</strong></li>
+              <li>Поставьте галочку <strong>Editor: Format On Save</strong></li>
+              <li>Также найдите <strong>Default Formatter</strong> и выберите <strong>golang.go</strong></li>
+            </ol>
+            <p style="margin-top: var(--space-sm); font-size: 1rem;"><strong>Результат:</strong> Теперь, как только вы нажмете <kbd>Ctrl+S</kbd> (Windows) или <kbd>Cmd+S</kbd> (Mac), VS Code сама перестроит ваш код по правилам Go.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="modules">
+      <div class="gopath-modules-comparison fade-in">
+        <h3><i class="fas fa-exchange-alt" aria-hidden="true"></i> Часть 3. Важное примечание о "Рабочем пространстве" (Go Modules vs GOPATH)</h3>
+        <p>Это критически важный раздел для понимания современной разработки на Go!</p>
+        
+        <div class="book-quote" style="background: rgba(255, 255, 255, 0.05);" role="note" aria-label="Цитата о GOPATH">
+          <div class="book-quote-content">
+            "Вам нужно выбрать каталог, который будет использоваться в качестве рабочего пространства Go, и установить переменную среды GOPATH так, чтобы она указывала на этот каталог."
+          </div>
+          <div class="book-quote-author">— Донован, Керниган. "Язык программирования Go"</div>
+        </div>
+
+        <div class="critical-note" role="alert" aria-label="Важное замечание">
+          <p><strong>⚠️ Важно для учеников (Современный стандарт):</strong></p>
+          <p>С тех пор, как вышла книга, в Go появился стандарт <strong>Go Modules</strong>. Сейчас <strong>не нужно</strong> настраивать переменную <code>GOPATH</code> вручную для каждого проекта. Вы можете создавать папку с проектом где угодно (Документы, Рабочий стол).</p>
+        </div>
+
+        <div class="comparison-grid">
+          <div class="comparison-column old" role="region" aria-label="Старый способ - GOPATH">
+            <div class="comparison-header old">
+              <i class="fas fa-history" aria-hidden="true"></i>
+              <h4>Старый способ (из книги)</h4>
+            </div>
+            <ul class="checklist" style="--accent-green: var(--accent-orange);">
+              <li>Одна большая папка <code>GOPATH</code></li>
+              <li>Все проекты внутри одной структуры</li>
+              <li>Ручная настройка переменных среды</li>
+              <li>Жёсткая структура каталогов</li>
+              <li>Сложнее для новичков</li>
+            </ul>
+            <div class="terminal-command" style="margin-top: var(--space-md);">
+              <code>export GOPATH=$HOME/go</code>
+              <button class="command-copy" onclick="copyToClipboard('export GOPATH=$HOME/go')" aria-label="Копировать команду">
+                <i class="far fa-copy" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="comparison-column new" role="region" aria-label="Современный способ - Go Modules">
+            <div class="comparison-header new">
+              <i class="fas fa-rocket" aria-hidden="true"></i>
+              <h4>Современный способ (Go Modules)</h4>
+            </div>
+            <ul class="checklist">
+              <li>Проекты можно создавать где угодно</li>
+              <li>Каждый проект независим</li>
+              <li>Автоматическое управление зависимостями</li>
+              <li>Нет ручной настройки <code>GOPATH</code></li>
+              <li>Проще для новичков и команд</li>
+            </ul>
+            <div class="terminal-command" style="margin-top: var(--space-md);">
+              <code>go mod init myproject</code>
+              <button class="command-copy" onclick="copyToClipboard('go mod init myproject')" aria-label="Копировать команду">
+                <i class="far fa-copy" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="important-note" style="margin-top: var(--space-xl);" role="note" aria-label="Практический совет">
+          <p><strong>🎯 Практический совет:</strong> Когда вы создаете новый проект в VS Code, просто откройте терминал (<kbd>Ctrl+`</kbd>) и напишите <code>go mod init myproject</code>. Это создаст файл <code>go.mod</code>, который скажет VS Code, что это самостоятельный проект.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="test">
+      <h3 class="fade-in">🚀 Часть 4. Создание и запуск первого проекта</h3>
+      
+      <div class="steps">
+        <div class="step fade-in" data-step="1">
+          <h4>1. Создание папки проекта (где угодно!)</h4>
+          <p>Создайте новую папку для вашего проекта (например, <code>hello-go</code>) и откройте ее в VS Code.</p>
+          <div class="terminal-command">
+            <code>mkdir hello-go && cd hello-go</code>
+            <button class="command-copy" onclick="copyToClipboard('mkdir hello-go && cd hello-go')" aria-label="Копировать команду">
+              <i class="far fa-copy" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="step fade-in" data-step="2">
+          <h4>2. Инициализация Go Modules (современный способ)</h4>
+          <p>В терминале VS Code выполните команду для создания модуля:</p>
+          <div class="terminal-command">
+            <code>go mod init hello-go</code>
+            <button class="command-copy" onclick="copyToClipboard('go mod init hello-go')" aria-label="Копировать команду">
+              <i class="far fa-copy" aria-hidden="true"></i>
+            </button>
+          </div>
+          <p>Это создаст файл <code>go.mod</code> — сердце вашего проекта.</p>
+        </div>
+
+        <div class="step fade-in" data-step="3">
+          <h4>3. Создание файла main.go</h4>
+          <p>Создайте в папке проекта файл <code>main.go</code> и вставьте стандартный код:</p>
+          
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-language">Go</span>
+              <button class="copy-btn" onclick="copyCode(this)" aria-label="Копировать код">
+                <i class="far fa-copy" aria-hidden="true"></i> Скопировать код
+              </button>
+            </div>
+            <pre><code>package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("🎉 It works! Go в VSCode готов к работе!")
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="step fade-in" data-step="4">
+          <h4>4. Запуск программы</h4>
+          <p>Для запуска в том же терминале выполните команду:</p>
+          <div class="terminal-command">
+            <code>go run main.go</code>
+            <button class="command-copy" onclick="copyToClipboard('go run main.go')" aria-label="Копировать команду">
+              <i class="far fa-copy" aria-hidden="true"></i>
+            </button>
+          </div>
+          <p>Вы должны увидеть приветственное сообщение: <code>🎉 It works! Go в VSCode готов к работе!</code></p>
+        </div>
+
+        <div class="step fade-in" data-step="5">
+          <h4>5. Альтернативный запуск (через VS Code)</h4>
+          <p>Нажмите <kbd>F5</kbd> или кнопку <code>▶ Run</code> сверху в VS Code.</p>
+          <div class="warning-note" role="note" aria-label="Примечание о настройке отладки">
+            <p><strong>Если предложение не появилось:</strong> Если конфигурации отладки нет, VS Code предложит ее создать. Выберите <strong>Go</strong>, и в папке <code>.vscode</code> будет создан файл <code>launch.json</code>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="warning-note fade-in" role="note" aria-label="Замечание о настройке PATH">
+        <p>⚠️ <strong>Важное замечание о настройке PATH:</strong> Если VS Code или терминал сообщают, что команда <code>go</code> не найдена, но в обычном терминале она работает, значит, VS Code не видит обновленную переменную <code>PATH</code>. <strong>Просто перезапустите VS Code</strong>, и после этого проблема должна быть решена.</p>
+      </div>
+
+      <div class="lesson-summary fade-in" role="region" aria-labelledby="summary-title">
+        <div class="summary-title">
+          <i class="fas fa-check-circle" aria-hidden="true"></i>
+          <h3 id="summary-title">✅ Итог урока: План для учеников</h3>
+        </div>
+        
+        <div class="grid cols-4">
+          <div class="card">
+            <h4><i class="fas fa-download" aria-hidden="true"></i> 1. Скачайте Go</h4>
+            <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">С официального сайта go.dev/dl/</p>
+          </div>
+          <div class="card">
+            <h4><i class="fas fa-code" aria-hidden="true"></i> 2. Установите VS Code</h4>
+            <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">code.visualstudio.com</p>
+          </div>
+          <div class="card">
+            <h4><i class="fas fa-puzzle-piece" aria-hidden="true"></i> 3. Расширение Go</h4>
+            <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">Установите расширение от Google</p>
+          </div>
+          <div class="card">
+            <h4><i class="fas fa-folder-open" aria-hidden="true"></i> 4. Создайте проект</h4>
+            <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">С <code>go mod init</code></p>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: var(--space-xl); padding: var(--space-lg); background: rgba(0, 173, 216, 0.1); border-radius: var(--border-radius-lg); border: 1px solid rgba(0, 173, 216, 0.3); box-shadow: var(--shadow-neon-cyan);" role="alert" aria-label="Сообщение об успехе">
+          <p style="font-size: 1.25rem; color: var(--accent-cyan); line-height: 1.5;">
+            <i class="fas fa-rocket" style="margin-right: var(--space-sm);" aria-hidden="true"></i> 
+            <strong>Ваша среда разработки Go полностью готова!</strong>
+          </p>
+          <p style="font-size: 1rem; color: var(--color-text); margin-top: var(--space-sm);">
+            Вы научились не только устанавливать инструменты, но и понимать разницу между старым (GOPATH) и современным (Go Modules) подходами.
+          </p>
+          <p style="font-size: 1rem; color: var(--color-text-secondary); margin-top: var(--space-sm);">
+            Теперь можно переходить к изучению синтаксиса языка и написанию более сложных программ.
+          </p>
+        </div>
+      </div>
+
+      <!-- Навигация между уроками -->
+      <div class="lesson-navigation fade-in" role="navigation" aria-label="Навигация между уроками">
+        <a href="lesson1.html" class="nav-btn">
+          <i class="fas fa-arrow-left" aria-hidden="true"></i>
+          <span>Предыдущий урок: История и философия</span>
+        </a>
+        <a href="lesson3.html" class="nav-btn">
+          <span>Следующий урок: Основы синтаксиса Go</span>
+          <i class="fas fa-arrow-right" aria-hidden="true"></i>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="lesson-footer fade-in" role="contentinfo">
+    <p>© 2026 GolangCourse. Урок 2: Полная установка и настройка Go в VS Code</p>
+    <p style="font-size: 0.75rem; margin-top: var(--space-xs); color: var(--color-text-tertiary);">
+      Все права защищены. Этот материал предназначен для образовательных целей.
+    </p>
+  </footer>
+
+  <!-- Прогресс урока -->
+  <div class="lesson-progress" role="status" aria-label="Прогресс прохождения урока">
+    <div class="progress-text">Прогресс</div>
+    <div class="progress-value" id="progress-percent">0%</div>
+    <button class="progress-circle" id="progressCircle" aria-label="Круг прогресса, кликните для прокрутки вверх" onclick="scrollToTop()">
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <defs>
+          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="var(--accent-purple)" />
+            <stop offset="33%" stop-color="var(--accent-blue)" />
+            <stop offset="66%" stop-color="var(--accent-cyan)" />
+            <stop offset="100%" stop-color="var(--accent-green)" />
+          </linearGradient>
+        </defs>
+        <circle cx="50" cy="50" r="40"></circle>
+        <circle cx="50" cy="50" r="40" id="progress-circle"></circle>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Back to top кнопка -->
+  <button class="back-to-top" id="backToTop" aria-label="Прокрутить наверх">
+    <i class="fas fa-chevron-up" aria-hidden="true"></i>
+  </button>
+
+  <!-- JavaScript -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Элементы DOM
+      const hamburger = document.getElementById('hamburger');
+      const mobileMenu = document.getElementById('mobileMenu');
+      const backToTop = document.getElementById('backToTop');
+      const swipeIndicator = document.getElementById('swipeIndicator');
+      const progressCircle = document.getElementById('progress-circle');
+      const progressPercent = document.getElementById('progress-percent');
+      const progressCircleBtn = document.getElementById('progressCircle');
+      const steps = document.querySelectorAll('.step');
+
+      // Мобильное меню
+      function toggleMobileMenu() {
+        const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
+        hamburger.classList.toggle('active');
+        mobileMenu.classList.toggle('active');
+        hamburger.setAttribute('aria-expanded', !isExpanded);
+        document.body.style.overflow = isExpanded ? '' : 'hidden';
+        
+        // Блокировка скролла на мобильных
+        if (!isExpanded) {
+          document.documentElement.style.overflow = 'hidden';
+        } else {
+          document.documentElement.style.overflow = '';
+        }
+      }
+
+      function closeMobileMenu() {
+        hamburger.classList.remove('active');
+        mobileMenu.classList.remove('active');
+        hamburger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+      }
+
+      hamburger.addEventListener('click', toggleMobileMenu);
+      hamburger.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleMobileMenu();
+        }
+      });
+
+      // Закрытие меню по клику на ссылку
+      document.querySelectorAll('.mobile-nav-link').forEach(link => {
+        link.addEventListener('click', closeMobileMenu);
+        link.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            closeMobileMenu();
+          }
+        });
+      });
+
+      // Закрытие меню по клику вне меню
+      mobileMenu.addEventListener('click', function(e) {
+        if (e.target === mobileMenu) {
+          closeMobileMenu();
+        }
+      });
+
+      // Закрытие меню по Escape
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+          closeMobileMenu();
+        }
+      });
+
+      // Свайп-индикатор
+      function checkSwipeIndicator() {
+        if (window.innerWidth < 768 && window.pageYOffset < 100) {
+          swipeIndicator.style.display = 'flex';
+        } else {
+          swipeIndicator.style.display = 'none';
+        }
+      }
+
+      swipeIndicator.addEventListener('click', function() {
+        window.scrollTo({
+          top: window.innerHeight,
+          behavior: 'smooth'
+        });
+      });
+
+      // Back to top кнопка
+      function toggleBackToTop() {
+        if (window.pageYOffset > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      }
+
+      backToTop.addEventListener('click', function() {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
+
+      // Прокрутка вверх по клику на прогресс-круг
+      function scrollToTop() {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      }
+
+      progressCircleBtn.addEventListener('click', scrollToTop);
+
+      // Анимация появления элементов
+      const fadeElements = document.querySelectorAll('.fade-in');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            // Останавливаем наблюдение после появления
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.1,
+        rootMargin: '50px'
+      });
+
+      fadeElements.forEach(element => {
+        observer.observe(element);
+      });
+
+      // Анимация появления шагов
+      const stepsObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            // Добавляем небольшую задержку для каскадного эффекта
+            const stepNumber = parseInt(entry.target.getAttribute('data-step') || '0');
+            entry.target.style.transitionDelay = `${stepNumber * 0.1}s`;
+          }
+        });
+      }, {
+        threshold: 0.1,
+        rootMargin: '100px'
+      });
+
+      steps.forEach(step => {
+        stepsObserver.observe(step);
+      });
+
+      // Прогресс урока
+      function updateProgress() {
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollPercent = (scrollTop / (documentHeight - windowHeight)) * 100;
+        const roundedPercent = Math.min(100, Math.round(scrollPercent));
+        
+        // Обновление кругового прогресса
+        const circumference = 2 * Math.PI * 40;
+        const offset = circumference - (roundedPercent / 100) * circumference;
+        progressCircle.style.strokeDasharray = circumference;
+        progressCircle.style.strokeDashoffset = offset;
+        
+        // Обновление текста прогресса
+        progressPercent.textContent = roundedPercent + '%';
+        
+        // Сохраняем прогресс в localStorage
+        localStorage.setItem('lesson1-progress', roundedPercent);
+      }
+
+      // Плавная прокрутка для якорных ссылок
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          const targetId = this.getAttribute('href');
+          if (targetId === '#') return;
+          
+          const targetElement = document.querySelector(targetId);
+          if (targetElement) {
+            e.preventDefault();
+            
+            // Рассчитываем отступ для фиксированной навигации
+            const navHeight = document.querySelector('nav').offsetHeight;
+            const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - navHeight - 20;
+            
+            window.scrollTo({
+              top: targetPosition,
+              behavior: 'smooth'
+            });
+            
+            // Обновляем URL без перезагрузки страницы
+            history.pushState(null, null, targetId);
+          }
+        });
+      });
+
+      // Подсветка активного раздела
+      const sections = document.querySelectorAll('section[id]');
+      const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+
+      function highlightNavLink() {
+        let current = '';
+        const scrollPosition = window.pageYOffset + 100;
+        
+        sections.forEach(section => {
+          const sectionTop = section.offsetTop;
+          const sectionHeight = section.clientHeight;
+          const sectionId = section.getAttribute('id');
+          
+          if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+            current = sectionId;
+          }
+        });
+        
+        navLinks.forEach(link => {
+          link.classList.remove('active');
+          const href = link.getAttribute('href');
+          if (href && href.includes(current)) {
+            link.classList.add('active');
+            link.setAttribute('aria-current', 'page');
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        });
+      }
+
+      // Оптимизация для производительности
+      let ticking = false;
+      let lastScrollY = window.scrollY;
+      
+      function onScroll() {
+        lastScrollY = window.scrollY;
+        
+        if (!ticking) {
+          requestAnimationFrame(function() {
+            updateProgress();
+            toggleBackToTop();
+            highlightNavLink();
+            checkSwipeIndicator();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      // Слушатели событий
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', function() {
+        checkSwipeIndicator();
+        closeMobileMenu();
+        updateProgress();
+      }, { passive: true });
+
+      // Инициализация
+      updateProgress();
+      toggleBackToTop();
+      highlightNavLink();
+      checkSwipeIndicator();
+
+      // Восстановление прогресса из localStorage
+      const savedProgress = localStorage.getItem('lesson2-progress');
+      if (savedProgress) {
+        const percent = parseInt(savedProgress);
+        if (progressPercent) {
+          progressPercent.textContent = percent + '%';
+        }
+        const radius = window.innerWidth < 480 ? 32 : 40;
+        const circumference = 2 * Math.PI * radius;
+        const offset = circumference - (percent / 100) * circumference;
+        if (progressCircle) {
+          progressCircle.style.strokeDasharray = circumference;
+          progressCircle.style.strokeDashoffset = offset;
+        }
+      }
+
+      // Открытие внешних ссылок в новой вкладке
+      const links = document.querySelectorAll('a[href^="http"]');
+      links.forEach(link => {
+        if (link.hostname !== window.location.hostname) {
+          link.setAttribute('target', '_blank');
+          link.setAttribute('rel', 'noopener noreferrer');
+        }
+      });
+
+      // Предотвращение зума при двойном тапе на iOS
+      let lastTouchEnd = 0;
+      document.addEventListener('touchend', function(event) {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) {
+          event.preventDefault();
+        }
+        lastTouchEnd = now;
+      }, { passive: false });
+
+      // Улучшенная работа с фокусом для доступности
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Tab') {
+          document.body.classList.add('user-is-tabbing');
+        }
+      });
+
+      document.addEventListener('click', function() {
+        document.body.classList.remove('user-is-tabbing');
+      });
+
+      // Инициализация круга прогресса
+      if (progressCircle) {
+        const svgNS = "http://www.w3.org/2000/svg";
+        const radius = window.innerWidth < 480 ? 32 : 40;
+        const circumference = 2 * Math.PI * radius;
+        
+        progressCircle.setAttribute("cx", "50");
+        progressCircle.setAttribute("cy", "50");
+        progressCircle.setAttribute("r", radius.toString());
+        progressCircle.setAttribute("fill", "none");
+        progressCircle.setAttribute("stroke", "url(#gradient)");
+        progressCircle.setAttribute("stroke-width", "4");
+        progressCircle.setAttribute("stroke-linecap", "round");
+        progressCircle.style.strokeDasharray = circumference;
+        progressCircle.style.strokeDashoffset = circumference;
+      }
+
+      // Добавляем поддержку клавиатуры для интерактивных элементов
+      document.querySelectorAll('.os-badge, .card-link, .nav-btn').forEach(element => {
+        element.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.click();
+          }
+        });
+        
+        // Улучшаем доступность для скринридеров
+        if (element.classList.contains('os-badge')) {
+          element.setAttribute('role', 'button');
+          element.setAttribute('tabindex', '0');
+        }
+      });
+
+      // Инициализация для мобильных устройств
+      function initMobileFeatures() {
+        // Добавляем класс для мобильных устройств
+        if ('ontouchstart' in window || navigator.maxTouchPoints) {
+          document.body.classList.add('touch-device');
+        }
+        
+        // Предотвращаем bounce-эффект на iOS
+        document.body.addEventListener('touchmove', function(e) {
+          if (e.target.classList.contains('table-wrapper') || 
+              e.target.closest('.table-wrapper') || 
+              e.target.classList.contains('code-block') ||
+              e.target.closest('.code-block')) {
+            // Разрешаем скролл внутри таблиц и код-блоков
+            return;
+          }
+        }, { passive: true });
+      }
+
+      initMobileFeatures();
+
+      // Обработка ошибок при копировании
+      window.copyErrorHandler = function(error) {
+        console.warn('Ошибка копирования:', error);
+        // Можно добавить уведомление для пользователя
+      };
+    });
+
+    // Функция для копирования кода
+    function copyCode(button) {
+      const codeBlock = button.closest('.code-block');
+      const code = codeBlock.querySelector('code').textContent;
+      
+      copyToClipboard(code).then(() => {
+        // Визуальная обратная связь
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i> Скопировано!';
+        button.style.background = 'rgba(16, 185, 129, 0.4)';
+        button.style.borderColor = 'var(--accent-green)';
+        button.setAttribute('aria-label', 'Код скопирован');
+        
+        setTimeout(() => {
+          button.innerHTML = originalText;
+          button.style.background = '';
+          button.style.borderColor = '';
+          button.setAttribute('aria-label', 'Копировать код');
+        }, 2000);
+      }).catch(window.copyErrorHandler);
+    }
+
+    // Улучшенная функция для копирования в буфер обмена
+    async function copyToClipboard(text) {
+      try {
+        // Используем современный Clipboard API
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          // Fallback для старых браузеров
+          const textArea = document.createElement('textarea');
+          textArea.value = text;
+          textArea.style.position = 'fixed';
+          textArea.style.left = '-999999px';
+          textArea.style.top = '-999999px';
+          document.body.appendChild(textArea);
+          textArea.focus();
+          textArea.select();
+          
+          const successful = document.execCommand('copy');
+          document.body.removeChild(textArea);
+          
+          if (!successful) {
+            throw new Error('Не удалось скопировать текст');
+          }
+        }
+        return true;
+      } catch (err) {
+        console.error('Ошибка копирования: ', err);
+        window.copyErrorHandler(err);
+        return false;
+      }
+    }
+
+    // Добавляем обработчики для всех кнопок копирования команд
+    document.querySelectorAll('.command-copy').forEach(button => {
+      button.addEventListener('click', async function() {
+        const command = this.parentElement.querySelector('code').textContent;
+        const success = await copyToClipboard(command);
+        
+        if (success) {
+          // Визуальная обратная связь
+          const originalText = this.innerHTML;
+          this.innerHTML = '<i class="fas fa-check"></i>';
+          this.style.background = 'rgba(16, 185, 129, 0.4)';
+          this.style.borderColor = 'var(--accent-green)';
+          this.setAttribute('aria-label', 'Команда скопирована');
+          
+          setTimeout(() => {
+            this.innerHTML = originalText;
+            this.style.background = '';
+            this.style.borderColor = '';
+            this.setAttribute('aria-label', 'Копировать команду');
+          }, 1500);
+        }
+      });
+      
+      // Поддержка клавиатуры
+      button.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.click();
+        }
+      });
+    });
+
+    // Улучшенная функция для скрытых элементов (для доступности)
+    if (!window.srOnlyStyle) {
+      const style = document.createElement('style');
+      style.textContent = `
+        .sr-only {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          padding: 0;
+          margin: -1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+          white-space: nowrap;
+          border: 0;
+        }
+      `;
+      document.head.appendChild(style);
+      window.srOnlyStyle = true;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Урок 4: Типы данных в Golang — Система типов</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* ===== CSS VARIABLES ===== */
+:root {
+/* Основные цвета - тёмная тема */
+--color-bg: #000000;
+--color-bg-secondary: #0a0a0a;
+--color-bg-tertiary: #111111;
+--color-surface: rgba(30, 30, 35, 0.7);
+/* Акцентные цвета - фиолетово-сине-розовая гамма */
+--accent-purple: #8b5cf6;
+--accent-blue: #3b82f6;
+--accent-pink: #ec4899;
+--accent-cyan: #06b6d4;
+--accent-green: #10b981;
+--accent-orange: #f97316;
+--accent-yellow: #eab308;
+/* Градиенты */
+--gradient-purple-blue: linear-gradient(90deg, #8b5cf6, #3b82f6);
+--gradient-blue-pink: linear-gradient(90deg, #3b82f6, #ec4899);
+--gradient-purple-pink: linear-gradient(90deg, #8b5cf6, #ec4899);
+--gradient-cyan-blue: linear-gradient(90deg, #06b6d4, #3b82f6);
+--gradient-biology: linear-gradient(90deg, #10b981, #3b82f6, #8b5cf6);
+/* Текст */
+--color-text: #f8fafc;
+--color-text-secondary: #94a3b8;
+--color-text-tertiary: #64748b;
+/* Границы */
+--color-border: rgba(148, 163, 184, 0.1);
+--color-border-light: rgba(148, 163, 184, 0.05);
+/* Эффекты */
+--shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+--shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
+--shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.5);
+--shadow-neon: 0 0 20px rgba(139, 92, 246, 0.3);
+--shadow-neon-blue: 0 0 20px rgba(59, 130, 246, 0.3);
+--shadow-neon-pink: 0 0 20px rgba(236, 72, 153, 0.3);
+--shadow-neon-cyan: 0 0 20px rgba(6, 182, 212, 0.3);
+--shadow-neon-green: 0 0 20px rgba(16, 185, 129, 0.3);
+/* Размеры */
+--border-radius-sm: 8px;
+--border-radius-md: 12px;
+--border-radius-lg: 16px;
+--border-radius-xl: 24px;
+--border-radius-2xl: 32px;
+/* Отступы */
+--space-xs: 0.5rem;
+--space-sm: 1rem;
+--space-md: 1.5rem;
+--space-lg: 2rem;
+--space-xl: 3rem;
+--space-2xl: 4rem;
+--space-3xl: 6rem;
+/* Транзиции */
+--transition-fast: 0.2s ease;
+--transition-normal: 0.3s ease;
+--transition-slow: 0.5s ease;
+}
+/* ===== BASE STYLES ===== */
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+html {
+scroll-behavior: smooth;
+}
+body {
+font-family: 'Inter', sans-serif;
+background-color: var(--color-bg);
+color: var(--color-text);
+line-height: 1.6;
+overflow-x: hidden;
+position: relative;
+}
+body::before {
+content: '';
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background:
+radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+radial-gradient(circle at 40% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+z-index: -1;
+pointer-events: none;
+}
+/* ===== TYPOGRAPHY ===== */
+h1, h2, h3, h4, h5, h6 {
+font-weight: 800;
+line-height: 1.2;
+margin-bottom: var(--space-md);
+}
+h1 {
+font-size: 4.5rem;
+background: var(--gradient-purple-pink);
+-webkit-background-clip: text;
+background-clip: text;
+color: transparent;
+text-shadow: 0 4px 30px rgba(139, 92, 246, 0.2);
+margin-bottom: var(--space-lg);
+}
+h2 {
+font-size: 3rem;
+background: var(--gradient-blue-pink);
+-webkit-background-clip: text;
+background-clip: text;
+color: transparent;
+margin-bottom: var(--space-md);
+}
+h3 {
+font-size: 1.75rem;
+color: var(--color-text);
+margin-bottom: var(--space-sm);
+}
+h4 {
+font-size: 1.25rem;
+color: var(--color-text);
+margin-bottom: var(--space-sm);
+}
+p {
+margin-bottom: var(--space-md);
+color: var(--color-text-secondary);
+}
+.lead {
+font-size: 1.25rem;
+font-weight: 400;
+color: var(--color-text);
+line-height: 1.8;
+margin-bottom: var(--space-xl);
+}
+strong {
+color: var(--color-text);
+font-weight: 600;
+}
+em {
+font-style: italic;
+color: var(--accent-cyan);
+}
+/* ===== UTILITY CLASSES ===== */
+.container {
+width: 100%;
+max-width: 1200px;
+margin: 0 auto;
+padding: 0 var(--space-lg);
+}
+.content-section {
+margin-bottom: var(--space-3xl);
+}
+.grid {
+display: grid;
+gap: var(--space-lg);
+}
+.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.cols-4 { grid-template-columns: repeat(4, 1fr); }
+.fade-in {
+opacity: 0;
+transform: translateY(20px);
+transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.fade-in.visible {
+opacity: 1;
+transform: translateY(0);
+}
+/* ===== NAVIGATION ===== */
+nav {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+background: rgba(10, 10, 10, 0.9);
+backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px);
+border-bottom: 1px solid var(--color-border);
+z-index: 1000;
+padding: var(--space-sm) 0;
+}
+.nav-container {
+display: flex;
+justify-content: space-between;
+align-items: center;
+max-width: 1200px;
+margin: 0 auto;
+padding: 0 var(--space-lg);
+}
+.logo {
+font-size: 1.5rem;
+font-weight: 800;
+background: var(--gradient-purple-blue);
+-webkit-background-clip: text;
+background-clip: text;
+color: transparent;
+display: flex;
+align-items: center;
+gap: var(--space-xs);
+text-decoration: none;
+transition: all var(--transition-normal);
+}
+.logo:hover {
+opacity: 0.9;
+}
+.nav-links {
+display: flex;
+gap: var(--space-xl);
+}
+.nav-link {
+color: var(--color-text-secondary);
+text-decoration: none;
+font-weight: 500;
+font-size: 1rem;
+transition: all var(--transition-normal);
+position: relative;
+}
+.nav-link:hover {
+color: var(--color-text);
+}
+.nav-link.active {
+color: var(--color-text);
+}
+.nav-link::after {
+content: '';
+position: absolute;
+bottom: -4px;
+left: 0;
+width: 0;
+height: 2px;
+background: var(--gradient-purple-pink);
+transition: width var(--transition-normal);
+}
+.nav-link:hover::after,
+.nav-link.active::after {
+width: 100%;
+}
+/* ===== HAMBURGER MENU ===== */
+.hamburger {
+display: none;
+background: none;
+border: none;
+cursor: pointer;
+padding: var(--space-xs);
+z-index: 1001;
+}
+.hamburger-line {
+display: block;
+width: 24px;
+height: 2px;
+background: var(--color-text);
+margin: 5px 0;
+transition: all var(--transition-normal);
+}
+.hamburger.active .hamburger-line:nth-child(1) {
+transform: rotate(45deg) translate(5px, 5px);
+}
+.hamburger.active .hamburger-line:nth-child(2) {
+opacity: 0;
+}
+.hamburger.active .hamburger-line:nth-child(3) {
+transform: rotate(-45deg) translate(7px, -6px);
+}
+/* ===== MOBILE MENU ===== */
+.mobile-menu {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0, 0, 0, 0.95);
+backdrop-filter: blur(30px);
+-webkit-backdrop-filter: blur(30px);
+z-index: 999;
+display: none;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+opacity: 0;
+transform: translateY(-20px);
+transition: opacity var(--transition-normal), transform var(--transition-normal);
+}
+.mobile-menu.active {
+display: flex;
+opacity: 1;
+transform: translateY(0);
+}
+.mobile-menu-links {
+display: flex;
+flex-direction: column;
+gap: var(--space-lg);
+text-align: center;
+}
+.mobile-nav-link {
+color: var(--color-text);
+text-decoration: none;
+font-size: 1.5rem;
+font-weight: 600;
+display: flex;
+align-items: center;
+gap: var(--space-md);
+padding: var(--space-md);
+transition: all var(--transition-normal);
+}
+.mobile-nav-link:hover {
+color: var(--accent-blue);
+transform: translateX(10px);
+}
+.mobile-nav-link i {
+width: 30px;
+font-size: 1.25rem;
+}
+.mobile-nav-link.active {
+color: var(--accent-purple);
+}
+.mobile-menu-footer {
+position: absolute;
+bottom: var(--space-xl);
+left: 0;
+width: 100%;
+text-align: center;
+color: var(--color-text-tertiary);
+font-size: 0.875rem;
+padding: var(--space-md);
+}
+/* ===== HERO SECTION ===== */
+.hero {
+min-height: 100vh;
+display: flex;
+align-items: center;
+padding: calc(6rem + var(--space-3xl)) 0 var(--space-3xl);
+position: relative;
+overflow: hidden;
+}
+.gopher {
+font-size: 8rem;
+text-align: center;
+margin-bottom: var(--space-xl);
+animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+0%, 100% { transform: translateY(0); }
+50% { transform: translateY(-20px); }
+}
+/* ===== CARDS ===== */
+.card {
+background: var(--color-surface);
+backdrop-filter: blur(10px);
+border: 1px solid var(--color-border);
+border-radius: var(--border-radius-lg);
+padding: var(--space-lg);
+transition: all var(--transition-normal);
+position: relative;
+overflow: hidden;
+}
+.card:hover {
+transform: translateY(-5px);
+border-color: var(--accent-purple);
+box-shadow: var(--shadow-neon);
+}
+.glow-effect:hover {
+box-shadow: 0 0 30px rgba(139, 92, 246, 0.4);
+}
+.creator-card {
+text-align: center;
+padding: var(--space-lg);
+}
+.creator-avatar {
+width: 60px;
+height: 60px;
+background: var(--gradient-purple-blue);
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 1.5rem;
+font-weight: 700;
+color: white;
+margin: 0 auto var(--space-md);
+}
+/* ===== QUOTE BLOCKS ===== */
+blockquote {
+background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+border-left: 4px solid var(--accent-blue);
+border-radius: var(--border-radius-md);
+padding: var(--space-lg);
+margin: var(--space-lg) 0;
+position: relative;
+}
+blockquote::before {
+content: "❝";
+position: absolute;
+top: -10px;
+left: 20px;
+font-size: 3rem;
+color: var(--accent-blue);
+opacity: 0.3;
+}
+blockquote p {
+margin-bottom: var(--space-sm);
+font-style: italic;
+}
+.quote-source {
+text-align: right;
+font-size: 0.9rem;
+color: var(--color-text-tertiary);
+margin-top: var(--space-sm);
+}
+/* ===== IMPORTANT NOTE ===== */
+.important-note {
+background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(139, 92, 246, 0.1));
+border: 1px solid rgba(236, 72, 153, 0.2);
+border-radius: var(--border-radius-lg);
+padding: var(--space-lg);
+margin: var(--space-lg) 0;
+}
+.important-note p {
+color: var(--color-text);
+font-size: 1.1rem;
+line-height: 1.8;
+}
+/* ===== TYPE CATEGORIES ===== */
+.type-categories {
+margin: var(--space-xl) 0;
+}
+.type-category {
+background: var(--color-surface);
+border: 1px solid var(--color-border);
+border-radius: var(--border-radius-md);
+padding: var(--space-lg);
+margin-bottom: var(--space-md);
+transition: all var(--transition-normal);
+}
+.type-category:hover {
+border-color: var(--accent-purple);
+box-shadow: var(--shadow-neon);
+}
+.type-category h4 {
+display: flex;
+align-items: center;
+gap: var(--space-sm);
+margin-bottom: var(--space-sm);
+}
+.type-category h4 i {
+font-size: 1.25rem;
+}
+.type-primitive .type-category h4 i { color: var(--accent-blue); }
+.type-composite .type-category h4 i { color: var(--accent-purple); }
+.type-reference .type-category h4 i { color: var(--accent-cyan); }
+.type-interface .type-category h4 i { color: var(--accent-green); }
+/* ===== COMPARISON TABLE ===== */
+.comparison-table {
+width: 100%;
+border-collapse: collapse;
+margin: var(--space-lg) 0;
+}
+.comparison-table th, .comparison-table td {
+border: 1px solid var(--color-border);
+padding: var(--space-sm);
+text-align: left;
+}
+.comparison-table th {
+background: linear-gradient(90deg, var(--accent-purple), var(--accent-blue));
+color: white;
+}
+.comparison-table tr:hover {
+background: rgba(255, 255, 255, 0.03);
+}
+.comparison-table td:first-child {
+font-weight: 600;
+color: var(--color-text);
+}
+/* ===== CODE BLOCKS ===== */
+code {
+background: rgba(255, 255, 255, 0.05);
+padding: 2px 6px;
+border-radius: var(--border-radius-sm);
+font-family: 'Monaco', 'Consolas', monospace;
+font-size: 0.9em;
+color: var(--accent-cyan);
+}
+pre {
+background: rgba(255, 255, 255, 0.05);
+border-radius: var(--border-radius-md);
+padding: var(--space-md);
+margin: var(--space-md) 0;
+overflow-x: auto;
+border: 1px solid var(--color-border);
+}
+pre code {
+display: block;
+color: var(--accent-cyan);
+background: none;
+padding: 0;
+}
+/* ===== TIMELINE ===== */
+.timeline {
+position: relative;
+padding-left: var(--space-xl);
+margin: var(--space-xl) 0;
+}
+.timeline::before {
+content: '';
+position: absolute;
+left: 7px;
+top: 0;
+bottom: 0;
+width: 2px;
+background: var(--gradient-purple-pink);
+}
+.timeline-item {
+position: relative;
+margin-bottom: var(--space-xl);
+}
+.timeline-item::before {
+content: '';
+position: absolute;
+left: -18px;
+top: 0;
+width: 12px;
+height: 12px;
+border-radius: 50%;
+background: var(--accent-blue);
+border: 2px solid var(--color-bg);
+}
+.timeline-year {
+display: inline-block;
+background: var(--gradient-purple-blue);
+color: white;
+padding: var(--space-xs) var(--space-sm);
+border-radius: var(--border-radius-sm);
+font-weight: 600;
+margin-bottom: var(--space-sm);
+}
+/* ===== TIPS SECTION ===== */
+.tips-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+gap: var(--space-lg);
+margin: var(--space-xl) 0;
+}
+.tip-card {
+background: var(--color-surface);
+border: 1px solid var(--color-border);
+border-radius: var(--border-radius-lg);
+padding: var(--space-lg);
+}
+.tip-icon {
+font-size: 2.5rem;
+margin-bottom: var(--space-md);
+}
+.tip-card.strings .tip-icon { color: var(--accent-green); }
+.tip-card.slices .tip-icon { color: var(--accent-purple); }
+.tip-card.interfaces .tip-icon { color: var(--accent-cyan); }
+.tip-card.types .tip-icon { color: var(--accent-orange); }
+/* ===== LESSON SUMMARY ===== */
+.lesson-summary {
+background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
+border-radius: var(--border-radius-lg);
+padding: var(--space-xl);
+margin: var(--space-2xl) 0;
+border: 1px solid rgba(139, 92, 246, 0.2);
+}
+.summary-title {
+display: flex;
+align-items: center;
+gap: var(--space-sm);
+margin-bottom: var(--space-lg);
+}
+.summary-title i {
+font-size: 2rem;
+background: var(--gradient-purple-pink);
+-webkit-background-clip: text;
+background-clip: text;
+color: transparent;
+}
+/* ===== LESSON NAVIGATION ===== */
+.lesson-navigation {
+display: flex;
+justify-content: space-between;
+margin: var(--space-2xl) 0;
+}
+.nav-btn {
+display: flex;
+align-items: center;
+gap: var(--space-sm);
+padding: var(--space-md) var(--space-lg);
+background: var(--color-surface);
+border: 1px solid var(--color-border);
+border-radius: var(--border-radius-lg);
+color: var(--color-text);
+text-decoration: none;
+font-weight: 600;
+transition: all var(--transition-normal);
+}
+.nav-btn:hover {
+background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+transform: translateY(-2px);
+box-shadow: var(--shadow-neon);
+}
+/* ===== LESSON PROGRESS ===== */
+.lesson-progress {
+position: fixed;
+right: var(--space-lg);
+bottom: var(--space-lg);
+z-index: 100;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: var(--space-xs);
+}
+.progress-text {
+font-size: 0.75rem;
+color: var(--color-text-tertiary);
+font-weight: 600;
+}
+.progress-value {
+font-size: 1.25rem;
+font-weight: 700;
+background: var(--gradient-purple-pink);
+-webkit-background-clip: text;
+background-clip: text;
+color: transparent;
+}
+.progress-circle {
+width: 80px;
+height: 80px;
+}
+.progress-circle svg {
+width: 100%;
+height: 100%;
+transform: rotate(-90deg);
+}
+.progress-circle circle {
+fill: none;
+stroke-width: 4;
+stroke-linecap: round;
+}
+.progress-circle circle:first-child {
+stroke: rgba(255, 255, 255, 0.1);
+}
+.progress-circle circle:last-child {
+stroke: url(#gradient);
+stroke-dasharray: 251;
+stroke-dashoffset: 251;
+transition: stroke-dashoffset 0.3s ease;
+}
+/* ===== BACK TO TOP BUTTON ===== */
+.back-to-top {
+position: fixed;
+right: var(--space-lg);
+bottom: calc(var(--space-lg) + 100px);
+width: 50px;
+height: 50px;
+background: var(--color-surface);
+backdrop-filter: blur(10px);
+border: 1px solid var(--color-border);
+border-radius: 50%;
+color: var(--color-text);
+cursor: pointer;
+display: none;
+align-items: center;
+justify-content: center;
+transition: all var(--transition-normal);
+z-index: 100;
+}
+.back-to-top.visible {
+display: flex;
+}
+.back-to-top:hover {
+background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+transform: translateY(-2px);
+box-shadow: var(--shadow-neon);
+}
+/* ===== SWIPE INDICATOR ===== */
+.swipe-indicator {
+position: absolute;
+bottom: var(--space-xl);
+left: 50%;
+transform: translateX(-50%);
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: var(--space-xs);
+color: var(--color-text-tertiary);
+font-size: 0.875rem;
+animation: bounce 2s infinite;
+}
+@keyframes bounce {
+0%, 100% { transform: translateX(-50%) translateY(0); }
+50% { transform: translateX(-50%) translateY(-10px); }
+}
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 1024px) {
+h1 { font-size: 3.5rem; }
+h2 { font-size: 2.5rem; }
+.cols-3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+.lead { font-size: 1.125rem; }
+.nav-links { display: none; }
+.hamburger { display: block; }
+.cols-2,
+.cols-3,
+.cols-4 {
+grid-template-columns: 1fr;
+}
+.lesson-navigation {
+flex-direction: column;
+gap: var(--space-md);
+}
+.gopher {
+font-size: 5rem;
+}
+.timeline {
+padding-left: var(--space-lg);
+}
+.lesson-progress {
+right: var(--space-md);
+bottom: var(--space-md);
+}
+.back-to-top {
+right: var(--space-md);
+bottom: calc(var(--space-md) + 100px);
+}
+.important-note,
+.lesson-summary {
+padding: var(--space-lg);
+}
+}
+@media (max-width: 480px) {
+.container {
+padding: 0 var(--space-md);
+}
+h1 { font-size: 2rem; }
+h2 { font-size: 1.75rem; }
+.card,
+blockquote,
+.important-note {
+padding: var(--space-md);
+}
+.mobile-nav-link {
+font-size: 1.25rem;
+}
+.tips-grid {
+grid-template-columns: 1fr;
+}
+.comparison-table {
+font-size: 0.85rem;
+}
+}
+/* ===== PRINT STYLES ===== */
+@media print {
+.hero,
+.lesson-progress,
+.back-to-top,
+.swipe-indicator,
+.hamburger,
+.mobile-menu {
+display: none !important;
+}
+body {
+background: white;
+color: black;
+}
+.card {
+border: 1px solid #ddd;
+box-shadow: none;
+}
+}
+</style>
+</head>
+<body>
+<!-- Навигация -->
+<nav>
+<div class="nav-container">
+<a href="index.html" class="logo">
+<i class="fab fa-golang"></i> GolangCourse
+</a>
+<!-- Десктопная навигация -->
+<div class="nav-links">
+<a href="index.html#overview" class="nav-link">К курсу</a>
+<a href="#introduction" class="nav-link">Введение</a>
+<a href="#fundamentals" class="nav-link">Фундаментальные</a>
+<a href="#composite" class="nav-link">Составные</a>
+<a href="#interfaces" class="nav-link">Интерфейсы</a>
+</div>
+<!-- Мобильное гамбургер-меню -->
+<button class="hamburger" id="hamburger" aria-label="Открыть меню" aria-expanded="false">
+<span class="hamburger-line"></span>
+<span class="hamburger-line"></span>
+<span class="hamburger-line"></span>
+</button>
+</div>
+<!-- Мобильное меню (полноэкранное) -->
+<div class="mobile-menu" id="mobileMenu">
+<div class="mobile-menu-links">
+<a href="index.html#overview" class="mobile-nav-link">
+<i class="fas fa-home"></i>
+К курсу
+</a>
+<a href="#introduction" class="mobile-nav-link">
+<i class="fas fa-book-open"></i>
+Введение
+</a>
+<a href="#fundamentals" class="mobile-nav-link">
+<i class="fas fa-calculator"></i>
+Фундаментальные
+</a>
+<a href="#composite" class="mobile-nav-link">
+<i class="fas fa-layer-group"></i>
+Составные
+</a>
+<a href="#interfaces" class="mobile-nav-link">
+<i class="fas fa-puzzle-piece"></i>
+Интерфейсы
+</a>
+</div>
+<div class="mobile-menu-footer">
+Урок 4 • Типы данных в Go
+</div>
+</div>
+</nav>
+<!-- Герой секция урока -->
+<section class="hero">
+<div class="container">
+<div class="gopher">🐹</div>
+<div style="text-align: center; margin-bottom: var(--space-xl);">
+<span style="display: inline-block; background: var(--gradient-blue-pink); padding: var(--space-xs) var(--space-md); border-radius: var(--border-radius-sm); font-size: 0.875rem; font-weight: 600; margin-bottom: var(--space-lg); box-shadow: var(--shadow-neon-blue);">
+Урок 4 • Система типов
+</span>
+<h1>Типы данных в Go: Архитектура значений</h1>
+<p class="lead">
+Типы данных — это фундамент, на котором строится весь язык Go. 
+Изучите глубину системы типов, чтобы писать эффективный, безопасный и идиоматичный код.
+</p>
+</div>
+<!-- Быстрая навигация по уроку -->
+<div class="grid cols-3">
+<a href="#fundamentals" class="card glow-effect" style="text-align: center;">
+<i class="fas fa-calculator" style="font-size: 2rem; margin-bottom: var(--space-sm); color: var(--accent-blue);"></i>
+<h4>Фундаментальные</h4>
+<p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">Числа, строки, булевы</p>
+</a>
+<a href="#composite" class="card glow-effect" style="text-align: center;">
+<i class="fas fa-layer-group" style="font-size: 2rem; margin-bottom: var(--space-sm); color: var(--accent-purple);"></i>
+<h4>Составные</h4>
+<p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">Массивы, срезы, карты, структуры</p>
+</a>
+<a href="#interfaces" class="card glow-effect" style="text-align: center;">
+<i class="fas fa-puzzle-piece" style="font-size: 2rem; margin-bottom: var(--space-sm); color: var(--accent-cyan);"></i>
+<h4>Интерфейсы</h4>
+<p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">Абстракция и полиморфизм</p>
+</a>
+</div>
+<!-- Свайп-индикатор для мобильных -->
+<div class="swipe-indicator" id="swipeIndicator">
+<i class="fas fa-chevron-down"></i>
+<span>Листайте вниз</span>
+</div>
+</div>
+</section>
+<!-- Основное содержание урока -->
+<main class="container">
+<section id="introduction">
+<div class="content-section fade-in">
+<h2>📚 Введение в систему типов Go</h2>
+<blockquote>
+<p><strong>"Типы Go делятся на четыре категории: фундаментальные типы, составные (агрегированные) типы, ссылочные типы и типы интерфейсов. Фундаментальные типы, которые являются темой данной главы, включают числа, строки и булевы значения."</strong></p>
+<div class="quote-source">— Донован, Керниган. "Язык программирования Go"</div>
+</blockquote>
+<blockquote>
+<p><strong>"В конечном счете вся память представляет собой просто биты, но компьютер работает с их фиксированными количествами, именуемыми словами, которые интерпретируются как целые числа, числа с плавающей точкой, множества битов и адреса памяти, а затем объединяются в большие агрегаты, которые представляют пакеты, пиксели, портфолио, стихи или что-то еще."</strong></p>
+<div class="quote-source">— Донован, Керниган. "Язык программирования Go"</div>
+</blockquote>
+<div class="type-categories">
+<h3 class="fade-in">🧩 Четыре категории типов в Go</h3>
+<div class="grid cols-2 fade-in">
+<div class="type-category type-primitive">
+<h4><i class="fas fa-calculator"></i> Фундаментальные типы</h4>
+<p>Типы, соответствующие возможностям аппаратного обеспечения:</p>
+<ul class="checklist">
+<li>Целые числа (<code>int</code>, <code>uint8</code>, <code>int64</code>)</li>
+<li>Числа с плавающей точкой (<code>float32</code>, <code>float64</code>)</li>
+<li>Комплексные числа (<code>complex64</code>, <code>complex128</code>)</li>
+<li>Булевы значения (<code>bool</code>)</li>
+<li>Строки (<code>string</code>)</li>
+</ul>
+</div>
+<div class="type-category type-composite">
+<h4><i class="fas fa-cubes"></i> Составные типы</h4>
+<p>Типы, которые группируют несколько значений:</p>
+<ul class="checklist">
+<li>Массивы (<code>[n]T</code>)</li>
+<li>Срезы (<code>[]T</code>)</li>
+<li>Структуры (<code>struct</code>)</li>
+<li>Отображения (<code>map[K]V</code>)</li>
+<li>Каналы (<code>chan T</code>)</li>
+</ul>
+</div>
+</div>
+<div class="grid cols-2 fade-in">
+<div class="type-category type-reference">
+<h4><i class="fas fa-link"></i> Ссылочные типы</h4>
+<p>Типы, которые ссылаются на данные в другом месте памяти:</p>
+<ul class="checklist">
+<li>Указатели (<code>*T</code>)</li>
+<li>Срезы (внутренне содержат указатель на массив)</li>
+<li>Отображения (внутренне реализованы как хэш-таблицы)</li>
+<li>Функции (как значения)</li>
+<li>Каналы</li>
+</ul>
+</div>
+<div class="type-category type-interface">
+<h4><i class="fas fa-share-alt"></i> Типы интерфейсов</h4>
+<p>Абстрактные типы, определяющие поведение:</p>
+<ul class="checklist">
+<li>Интерфейсы (<code>interface{}</code>)</li>
+<li>Пустой интерфейс (<code>interface{}</code>)</li>
+<li>Методы как часть интерфейсов</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="fundamentals" class="fade-in">
+<div class="content-section">
+<h2>🧮 Фундаментальные типы данных</h2>
+<p>Фундаментальные типы Go обеспечивают основу для работы с данными. Они спроектированы с учетом эффективности и безопасности.</p>
+<div class="grid cols-2">
+<div class="card">
+<h3><i class="fas fa-hashtag"></i> Целые числа</h3>
+<p>Go предоставляет как знаковую, так и беззнаковую целочисленную арифметику:</p>
+<pre><code>// Знаковые целые числа
+var i8 int8 = 127
+var i16 int16 = 32767
+var i32 int32 = 2147483647
+var i64 int64 = 9223372036854775807
+
+// Беззнаковые целые числа  
+var u8 uint8 = 255
+var u16 uint16 = 65535
+var u32 uint32 = 4294967295
+var u64 uint64 = 18446744073709551615
+
+// Архитектурно-зависимые типы
+var i int = 1000000    // 32 или 64 бита
+var ui uint = 2000000  // 32 или 64 бита
+
+// Псевдонимы
+var b byte = 'A'  // byte = uint8
+var r rune = '★'  // rune = int32 (для Unicode)</code></pre>
+<div class="important-note">
+<p><strong>Важно:</strong> В Go нет неявных преобразований между целочисленными типами разных размеров:</p>
+<pre><code>var apples int32 = 1
+var oranges int16 = 2
+var compote int = apples + oranges  // ОШИБКА!
+var compote = int(apples) + int(oranges) // Правильно</code></pre>
+</div>
+</div>
+<div class="card">
+<h3><i class="fas fa-decimal"></i> Числа с плавающей точкой</h3>
+<p>Для работы с дробными числами Go предоставляет два типа:</p>
+<pre><code>// Числа с плавающей точкой
+var f32 float32 = 3.141592653589793
+var f64 float64 = math.Pi // Более точное значение π
+
+// Комплексные числа
+var c64 complex64 = 3 + 4i
+var c128 complex128 = complex(5, 12)</code></pre>
+<blockquote>
+<p><strong>"Обратите внимание на асимметрию: нетипизированные целые значения преобразуются в тип int, размер которого не гарантируется, но нетипизированные значения с плавающей точкой и нетипизированные комплексные значения преобразуются в типы с явно указанным размером float64 и complex128."</strong></p>
+<div class="quote-source">— Донован, Керниган. "Язык программирования Go"</div>
+</blockquote>
+</div>
+</div>
+<div class="grid cols-2">
+<div class="card">
+<h3><i class="fas fa-toggle-on"></i> Булевы значения</h3>
+<pre><code>var isActive bool = true
+var isComplete bool  // false (нулевое значение)
+var isEnabled = false
+
+// Операции сравнения возвращают bool
+if 3 > 2 && "hello" == "hello" {
+    fmt.Println("Все верно!")
+}</code></pre>
+<p>Булевы значения в Go представлены только двумя предопределенными константами: <code>true</code> и <code>false</code>. Операции сравнения (<code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>) возвращают булевы значения.</p>
+</div>
+<div class="card">
+<h3><i class="fas fa-font"></i> Строки</h3>
+<pre><code>s1 := "Hello, "
+s2 := "世界" // Unicode символы
+s3 := s1 + s2 // Конкатенация
+fmt.Println(s3) // "Hello, 世界"
+
+// Длина строки в байтах и символах
+fmt.Println("Длина в байтах:", len(s2)) // 6 (UTF-8)
+fmt.Println("Символы:", utf8.RuneCountInString(s2)) // 2
+
+// Итерация по строке
+for i, r := range s2 {
+    fmt.Printf("Позиция %d: %c (код: %U)\n", i, r, r)
+}</code></pre>
+<blockquote>
+<p><strong>"Строковое значение можно записать как строковый литерал, последовательность байтов, заключенную в двойные кавычки. Поскольку исходные файлы Go всегда используют кодировку UTF-8, а по соглашению текстовые строки Go интерпретируются как закодированные с использованием UTF-8, мы можем включать символы Unicode в строковые литералы."</strong></p>
+<div class="quote-source">— Донован, Керниган. "Язык программирования Go"</div>
+</blockquote>
+</div>
+</div>
+<h3 class="fade-in"><i class="fas fa-infinity"></i> Константы и нетипизированные значения</h3>
+<div class="card fade-in">
+<blockquote>
+<p><strong>"Константы в Go немного необычны. Хотя константа может иметь любой фундаментальный тип данных, такой как int или float64, многие константы не привязаны к определенному типу. Компилятор представляет эти не привязанные к типу константы с гораздо большей числовой точностью, чем значения фундаментальных типов, а их арифметика является более точной, чем машинная; можно предположить по крайней мере 256-битовую точность."</strong></p>
+<div class="quote-source">— Донован, Керниган. "Язык программирования Go"</div>
+</blockquote>
+<pre><code>const (
+    Pi = 3.14159265358979323846
+    World = "世界"
+    Truth = true
+    Big = 1 &lt;&lt; 100
+    Small = Big &gt;&gt; 99
+)</code></pre>
+<p>Имеется шесть вариантов нетипизированных констант: нетипизированное булево значение, нетипизированное целое, нетипизированное число с плавающей точкой, нетипизированное комплексное, нетипизированная строка и нетипизированное значение <code>nil</code>.</p>
+</div>
+</div>
+</section>
+<section id="composite" class="fade-in">
+<div class="content-section">
+<h2>🧱 Составные типы</h2>
+<p>Составные типы позволяют создавать сложные структуры данных из базовых типов. Они являются основой для построения реальных приложений на Go.</p>
+<div class="grid cols-2">
+<div class="card">
+<h3><i class="fas fa-th-large"></i> Массивы</h3>
+<blockquote>
+<p><strong>"Массивы являются фундаментальной структурой данных в Go. Массив в Go представляет собой нумерованную последовательность элементов фиксированной длины одного типа."</strong></p>
+<div class="quote-source">— Донован, Керниган. "Язык программирования Go"</div>
+</blockquote>
+<pre><code>var a [3]int // массив из 3 целых чисел
+fmt.Println(a[0]) // выведет "0"
+
+// Инициализация массива
+b := [3]int{1, 2, 3}
+c := [...]int{1, 2, 3} // компилятор определяет длину
+
+// Двумерные массивы
+d := [2][3]int{{1, 2, 3}, {4, 5, 6}}</code></pre>
+<div class="important-note">
+<p><strong>Важно:</strong> Длина массива является его типом, поэтому массивы различной длины — это разные типы. Это означает, что нельзя использовать массивы разных длин в качестве аргументов и возвращаемых значений функций без преобразования.</p>
+</div>
+</div>
+<div class="card">
+<h3><i class="fas fa-cut"></i> Срезы (Slices)</h3>
+<blockquote>
+<p><strong>"Срезы являются фундаментальным понятием в Go. Пока думайте о срезе как о последовательности (с динамическим размером) s элементов массива, в которой к отдельным элементам можно обратиться как к s[i], а к непрерывной подпоследовательности — как к s[m:n]."</strong></p>
+<div class="quote-source">— Донован, Керниган. "Язык программирования Go"</div>
+</blockquote>
+<pre><code>// Создание срезов
+slice := []int{1, 2, 3, 4, 5}
+slice2 := make([]string, 0, 10) // длина 0, емкость 10
+arr := [5]int{1, 2, 3, 4, 5}
+slice3 := arr[1:4] // срез массива: [2, 3, 4]
+
+// Динамическое изменение размера
+slice = append(slice, 6, 7, 8)
+
+// Функция append
+var runes []rune
+for _, r := range "Hello, 世界" {
+    runes = append(runes, r)
+}</code></pre>
+</div>
+</div>
+<div class="card fade-in">
+<h3><i class="fas fa-chart-bar"></i> Сравнение массивов и срезов</h3>
+<div class="table-wrapper">
+<table class="comparison-table">
+<thead>
+<tr>
+<th>Характеристика</th>
+<th>Массивы</th>
+<th>Срезы</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Размер</strong></td>
+<td>Фиксированный</td>
+<td>Динамический</td>
+</tr>
+<tr>
+<td><strong>Передача в функции</strong></td>
+<td>По значению (копируются все элементы)</td>
+<td>По ссылке (копируется только заголовок среза)</td>
+</tr>
+<tr>
+<td><strong>Гибкость</strong></td>
+<td>Ограниченная</td>
+<td>Высокая</td>
+</tr>
+<tr>
+<td><strong>Частота использования</strong></td>
+<td>Умеренная</td>
+<td>Очень частая</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="grid cols-2">
+<div class="card">
+<h3><i class="fas fa-map"></i> Отображения (Maps)</h3>
+<blockquote>
+<p><strong>"Отображения — это встроенный тип данных для хранения пар "ключ-значение". Ключи могут быть любого сравнимого типа (типы, для которых оператор == определен), а значения — любого типа. Отображения обеспечивают быстрый поиск, добавление и удаление элементов."</strong></p>
+<div class="quote-source">— Донован, Керниган. "Язык программирования Go"</div>
+</blockquote>
+<pre><code>// Создание отображений
+ages := make(map[string]int)
+ages["alice"] = 31
+ages["bob"] = 29
+
+// Литерал отображения
+commits := map[string]int{
+    "rsc": 3711,
+    "r":   2138,
+    "gri": 1832,
+    "adg": 912,
+}
+
+// Проверка наличия ключа
+if v, ok := ages["bob"]; ok {
+    fmt.Printf("Bob: %d лет\n", v)
+}
+
+// Удаление элемента
+delete(ages, "bob")</code></pre>
+<div class="important-note">
+<p><strong>Важно:</strong> Ключ в отображении должен быть типа, который поддерживает оператор <code>==</code>. Следовательно, срезы нельзя использовать в качестве ключей отображений, потому что срезы не поддерживают оператор <code>==</code>.</p>
+</div>
+</div>
+<div class="card">
+<h3><i class="fas fa-cube"></i> Структуры</h3>
+<blockquote>
+<p><strong>"Структура — это агрегатный тип данных, который группирует вместе значения (поля) разных типов под общим именем."</strong></p>
+<div class="quote-source">— Донован, Керниган. "Язык программирования Go"</div>
+</blockquote>
+<pre><code>// Объявление структуры
+type Employee struct {
+    ID        int
+    Name      string
+    Address   string
+    Salary    float64
+    ManagerID int
+}
+
+// Инициализация структуры
+var dilbert Employee
+dilbert.Name = "Dilbert"
+
+// Структурные литералы
+point := Point{X: 1, Y: 2}
+employee := Employee{ID: 1, Name: "Alice"}
+
+// Вложенные структуры
+type Circle struct {
+    Center Point
+    Radius float64
+}
+
+// Встраивание структур
+type ColoredPoint struct {
+    Point
+    Color color.RGBA
+}</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="interfaces" class="fade-in">
+<div class="content-section">
+<h2>🔗 Ссылочные типы и интерфейсы</h2>
+<p>Ссылочные типы и интерфейсы обеспечивают мощные механизмы абстракции и совместного использования кода в Go.</p>
+<div class="grid cols-2">
+<div class="card">
+<h3><i class="fas fa-location-arrow"></i> Указатели</h3>
+<pre><code>x := 1
+p := &x // p имеет тип *int и указывает на x
+fmt.Println(*p) // "1"
+*p = 2 // эквивалентно присваиванию x = 2
+fmt.Println(x) // "2"
+
+// Нулевое значение указателя - nil
+var q *int
+fmt.Println(q == nil) // true</code></pre>
+<blockquote>
+<p><strong>"Go предоставляет указатели, но без арифметики указателей (в отличие от C). Указатель содержит адрес переменной. Оператор <code>&amp;</code> возвращает адрес переменной, а оператор <code>*</code> получает значение по указателю."</strong></p>
+<div class="quote-source">— Донован, Керниган. "Язык программирования Go"</div>
+</blockquote>
+</div>
+<div class="card">
+<h3><i class="fas fa-project-diagram"></i> Функции как типы</h3>
+<pre><code>// Объявление типа функции
+type Operation func(int, int) int
+
+// Использование функции как значения
+func add(x, y int) int { return x + y }
+func sub(x, y int) int { return x - y }
+
+func compute(op Operation, a, b int) int {
+    return op(a, b)
+}
+
+// Передача функции как аргумента
+result := compute(add, 3, 4) // 7</code></pre>
+<p>Функции в Go являются полноценными типами первого класса. Это позволяет создавать высокоуровневые абстракции и реализовывать функциональные паттерны.</p>
+</div>
+</div>
+<div class="card fade-in">
+<h3><i class="fas fa-puzzle-piece"></i> Интерфейсы</h3>
+<blockquote>
+<p><strong>"Все типы, которые мы рассматривали до сих пор, были конкретными типами. Интерфейсный тип — это абстрактный тип. Он не определяет реализацию значений и операций над ними; он лишь описывает их внешнее поведение: какие методы могут быть вызваны у значений этого типа."</strong></p>
+<div class="quote-source">— Донован, Керниган. "Язык программирования Go"</div>
+</blockquote>
+<pre><code>// Объявление интерфейса
+type Reader interface {
+    Read(p []byte) (n int, err error)
+}
+
+type Writer interface {
+    Write(p []byte) (n int, err error)
+}
+
+// Реализация интерфейса (неявная)
+type MyReader struct{}
+func (m *MyReader) Read(p []byte) (n int, err error) {
+    copy(p, "Hello, world")
+    return len("Hello, world"), nil
+}
+
+// Пустой интерфейс
+var any interface{}
+any = 42
+any = "hello"
+any = true</code></pre>
+<blockquote>
+<p><strong>"Каждая группировка конкретных типов на основе их общего поведения может быть выражена как тип интерфейса. В отличие от языков на основе классов, в которых набор интерфейсов, которым соответствует класс, указывается явно, в Go мы можем определять новые абстракции или группы интересов, когда мы в них нуждаемся, не изменяя при этом объявления конкретных типов."</strong></p>
+<div class="quote-source">— Донован, Керниган. "Язык программирования Go"</div>
+</blockquote>
+</div>
+</div>
+</section>
+<section id="conclusion" class="lesson-summary fade-in">
+<div class="summary-title">
+<i class="fas fa-gem"></i>
+<h3>💎 Заключение: Мощь системы типов</h3>
+</div>
+<blockquote style="background: rgba(255, 255, 255, 0.05); margin: var(--space-md) 0;">
+<p><em>"Go поощряет понимание дизайна современных компьютерных систем, в частности — важность локализации. Его встроенные типы данных и большинство библиотечных структур данных созданы для естественной работы без явной инициализации или неявных конструкторов, так что в коде скрывается относительно мало распределений и записей памяти. Составные типы Go (структуры и массивы) хранят свои данные непосредственно, а не через указатели, что улучшает локальность и повышает производительность."</em></p>
+<div class="quote-source">— Донован, Керниган. "Язык программирования Go"</div>
+</blockquote>
+<h4>🌟 Практические рекомендации</h4>
+<div class="tips-grid">
+<div class="tip-card types">
+<div class="tip-icon">
+<i class="fas fa-calculator"></i>
+</div>
+<h4>Выбор типов данных</h4>
+<ul class="checklist">
+<li>Используйте <code>int</code> и <code>float64</code> по умолчанию</li>
+<li>Предпочитайте срезы массивам в большинстве случаев</li>
+<li>Используйте составные литералы для инициализации</li>
+</ul>
+</div>
+<div class="tip-card strings">
+<div class="tip-icon">
+<i class="fas fa-font"></i>
+</div>
+<h4>Работа со строками</h4>
+<ul class="checklist">
+<li>Помните о неизменяемости строк</li>
+<li>Используйте пакет <code>strings</code></li>
+<li>Для Unicode используйте <code>unicode/utf8</code></li>
+</ul>
+</div>
+<div class="tip-card slices">
+<div class="tip-icon">
+<i class="fas fa-cut"></i>
+</div>
+<h4>Оптимизация срезов</h4>
+<ul class="checklist">
+<li>Заранее выделяйте емкость с помощью <code>make([]T, 0, capacity)</code></li>
+<li>Используйте <code>copy</code> вместо циклов для копирования срезов</li>
+<li>Помните о возможном "утечке" памяти при создании срезов</li>
+</ul>
+</div>
+<div class="tip-card interfaces">
+<div class="tip-icon">
+<i class="fas fa-puzzle-piece"></i>
+</div>
+<h4>Работа с интерфейсами</h4>
+<ul class="checklist">
+<li>Определяйте интерфейсы только при необходимости</li>
+<li>Держите интерфейсы маленькими</li>
+<li>Используйте <code>switch t := x.(type)</code> для проверки типов</li>
+</ul>
+</div>
+</div>
+<div style="text-align: center; margin-top: var(--space-xl); padding: var(--space-lg); background: rgba(138, 43, 226, 0.1); border-radius: var(--border-radius-lg); border: 1px solid rgba(157, 78, 221, 0.3); box-shadow: var(--shadow-neon);">
+<p style="font-size: 1.25rem; color: var(--accent-purple); line-height: 1.5;">
+<i class="fas fa-arrow-right" style="margin-right: var(--space-sm);"></i>
+<strong>Понимание типов данных в Go — это ключ к написанию эффективного, идиоматичного кода.</strong>
+</p>
+<p style="font-size: 1rem; color: var(--color-text-secondary); margin-top: var(--space-sm);">
+В следующем уроке мы изучим функции и методы в Go — как объединять логику и данные для создания мощных абстракций.
+</p>
+</div>
+</section>
+<!-- Навигация между уроками -->
+<div class="lesson-navigation fade-in">
+<a href="lesson3.html" class="nav-btn">
+<i class="fas fa-arrow-left"></i>
+<span>Предыдущий урок: Переменные</span>
+</a>
+<a href="lesson5.html" class="nav-btn">
+<span>Следующий урок: Функции и методы</span>
+<i class="fas fa-arrow-right"></i>
+</a>
+</div>
+</main>
+<!-- Прогресс урока -->
+<div class="lesson-progress">
+<div class="progress-text">Прогресс</div>
+<div class="progress-value" id="progress-percent">0%</div>
+<div class="progress-circle">
+<svg viewBox="0 0 100 100">
+<defs>
+<linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="var(--accent-purple)" />
+<stop offset="100%" stop-color="var(--accent-pink)" />
+</linearGradient>
+</defs>
+<circle cx="50" cy="50" r="40"></circle>
+<circle cx="50" cy="50" r="40" id="progress-circle"></circle>
+</svg>
+</div>
+</div>
+<!-- Back to top кнопка -->
+<button class="back-to-top" id="backToTop" aria-label="Наверх">
+<i class="fas fa-chevron-up"></i>
+</button>
+<!-- JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+// Элементы DOM
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+const backToTop = document.getElementById('backToTop');
+const swipeIndicator = document.getElementById('swipeIndicator');
+const progressCircle = document.getElementById('progress-circle');
+const progressPercent = document.getElementById('progress-percent');
+// Мобильное меню
+function toggleMobileMenu() {
+const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
+hamburger.classList.toggle('active');
+mobileMenu.classList.toggle('active');
+hamburger.setAttribute('aria-expanded', !isExpanded);
+document.body.style.overflow = isExpanded ? '' : 'hidden';
+}
+function closeMobileMenu() {
+hamburger.classList.remove('active');
+mobileMenu.classList.remove('active');
+hamburger.setAttribute('aria-expanded', 'false');
+document.body.style.overflow = '';
+}
+hamburger.addEventListener('click', toggleMobileMenu);
+// Закрытие меню по клику на ссылку
+document.querySelectorAll('.mobile-nav-link').forEach(link => {
+link.addEventListener('click', closeMobileMenu);
+});
+// Закрытие меню по клику вне меню
+mobileMenu.addEventListener('click', function(e) {
+if (e.target === mobileMenu) {
+closeMobileMenu();
+}
+});
+// Закрытие меню по Escape
+document.addEventListener('keydown', function(e) {
+if (e.key === 'Escape') {
+closeMobileMenu();
+}
+});
+// Свайп-индикатор
+function checkSwipeIndicator() {
+if (window.innerWidth < 768 && window.pageYOffset < 100) {
+swipeIndicator.style.display = 'flex';
+} else {
+swipeIndicator.style.display = 'none';
+}
+}
+// Back to top кнопка
+function toggleBackToTop() {
+if (window.pageYOffset > 300) {
+backToTop.classList.add('visible');
+} else {
+backToTop.classList.remove('visible');
+}
+}
+backToTop.addEventListener('click', function() {
+window.scrollTo({
+top: 0,
+behavior: 'smooth'
+});
+});
+// Анимация появления элементов
+const fadeElements = document.querySelectorAll('.fade-in');
+const observer = new IntersectionObserver((entries) => {
+entries.forEach(entry => {
+if (entry.isIntersecting) {
+entry.target.classList.add('visible');
+}
+});
+}, {
+threshold: 0.1,
+rootMargin: '50px'
+});
+fadeElements.forEach(element => {
+observer.observe(element);
+});
+// Прогресс урока
+function updateProgress() {
+const windowHeight = window.innerHeight;
+const documentHeight = document.documentElement.scrollHeight;
+const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+const scrollPercent = (scrollTop / (documentHeight - windowHeight)) * 100;
+const roundedPercent = Math.min(100, Math.round(scrollPercent));
+// Обновление кругового прогресса
+const circumference = 2 * Math.PI * 40;
+const offset = circumference - (roundedPercent / 100) * circumference;
+progressCircle.style.strokeDasharray = circumference;
+progressCircle.style.strokeDashoffset = offset;
+// Обновление текста прогресса
+progressPercent.textContent = roundedPercent + '%';
+// Сохраняем прогресс в localStorage
+localStorage.setItem('lesson4-progress', roundedPercent);
+}
+// Плавная прокрутка для якорных ссылок
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+anchor.addEventListener('click', function(e) {
+const targetId = this.getAttribute('href');
+if (targetId === '#') return;
+const targetElement = document.querySelector(targetId);
+if (targetElement) {
+e.preventDefault();
+// Рассчитываем отступ для фиксированной навигации
+const navHeight = document.querySelector('nav').offsetHeight;
+const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - navHeight;
+window.scrollTo({
+top: targetPosition,
+behavior: 'smooth'
+});
+}
+});
+});
+// Подсветка активного раздела
+const sections = document.querySelectorAll('section[id], .lesson-summary');
+const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+function highlightNavLink() {
+let current = '';
+const scrollPosition = window.pageYOffset + 100;
+sections.forEach(section => {
+const sectionTop = section.offsetTop;
+const sectionHeight = section.clientHeight;
+const sectionId = section.getAttribute('id');
+if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+current = sectionId;
+}
+});
+navLinks.forEach(link => {
+link.classList.remove('active');
+const href = link.getAttribute('href');
+if (href && href.includes(current)) {
+link.classList.add('active');
+}
+});
+}
+// Оптимизация для производительности
+let ticking = false;
+function onScroll() {
+if (!ticking) {
+requestAnimationFrame(function() {
+updateProgress();
+toggleBackToTop();
+highlightNavLink();
+checkSwipeIndicator();
+ticking = false;
+});
+ticking = true;
+}
+}
+// Слушатели событий
+window.addEventListener('scroll', onScroll, { passive: true });
+window.addEventListener('resize', function() {
+checkSwipeIndicator();
+closeMobileMenu();
+}, { passive: true });
+// Инициализация
+updateProgress();
+toggleBackToTop();
+highlightNavLink();
+checkSwipeIndicator();
+// Восстановление прогресса из localStorage
+const savedProgress = localStorage.getItem('lesson4-progress');
+if (savedProgress) {
+const percent = parseInt(savedProgress);
+progressPercent.textContent = percent + '%';
+const circumference = 2 * Math.PI * 40;
+const offset = circumference - (percent / 100) * circumference;
+progressCircle.style.strokeDasharray = circumference;
+progressCircle.style.strokeDashoffset = offset;
+}
+// Открытие внешних ссылок в новой вкладке
+const links = document.querySelectorAll('a[href^="http"]');
+links.forEach(link => {
+if (link.hostname !== window.location.hostname) {
+link.setAttribute('target', '_blank');
+link.setAttribute('rel', 'noopener noreferrer');
+}
+});
+// Предотвращение зума при двойном тапе на iOS
+let lastTouchEnd = 0;
+document.addEventListener('touchend', function(event) {
+const now = Date.now();
+if (now - lastTouchEnd <= 300) {
+event.preventDefault();
+}
+lastTouchEnd = now;
+}, false);
+});
+</script>
+</body>
+</html>
